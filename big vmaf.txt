@@ -2,13 +2,19 @@
 パラメーターの候補
 	https://gist.github.com/nico-lab/06be71f0c7fc311c46c93387d9902cdc
 	https://ch.nicovideo.jp/til
-		ABR、CFRどちらを使うかで背一定が変わる
-		x264つかえばCFRだとzone、qpfileでフレーム毎に品質を変えられる
+		ABR、CRFどちらを使うかで設定が変わる
+			CRFだとzone、qpfileでフレーム毎に品質を変えられる
+			https://en.wikibooks.org/wiki/MeGUI/x264_Settings#qpfile
+				フレーム単位で品質指定してたら容量がすごく増えそう
+		openclが使えるかどうか。速度向上と品質を確認
+		2passが有効かどうか
+		slowerを基本として互換性に合わせるのがよさそう
 	https://nico-lab.net/setting_libvpx-vp9_with_ffmpeg/
 vmaf連携方法
 	https://nico-lab.net/libvmaf_with_ffmpeg/
 一括処理スクリプト
 	シェルで書く
+	ログを読みやすくする
 
 fpsのタイムコードをPHPで配列に入れてsrt字幕をフレーム毎に書き込む時間を指定する
 内容は時間、フレーム番号、vmafM、ノイズ係数（drawtext）など
@@ -32,9 +38,70 @@ ffmpeg -f lavfi -i color=d=3600:s=16x16:r=24/1.001 24p-3600.mp4
 ffprobe -v error -i 24p-3600.mp4 -select_streams v:0 -show_frames -show_entries frame=pkt_pts_time -of csv=p=0 > output.csv
 小数6桁まで
 
-
-
 Optunaを使ってFFmpegのエンコードパラメータを最適化してみる https://gist.github.com/sile/8aa1ff7808dd55298f51dd70c8b83092
+
+https://rigaya34589.blog.fc2.com/blog-category-1.html
+rigayaの日記兼メモ帳 x264 エンコード実験 --weightp 2 https://rigaya34589.blog.fc2.com/blog-entry-39.html
+重み付け予測ということはとりあえず、フェードとかに強くなるらしいよ？ まず、フェードとか多そうな動画を探してみた。
+rigayaの日記兼メモ帳 x264 エンコード実験 --bframes編 https://rigaya34589.blog.fc2.com/blog-entry-8.html
+	slowerからb_adapt=2になる
+rigayaの日記兼メモ帳 x264 エンコード実験 --subme編 https://rigaya34589.blog.fc2.com/blog-entry-6.html
+subme 9 と 10 がなにも変わらんのは--aq-strength を 0 にしたせいかな。
+なんか subme 10 って AQ を使うらしいので。
+	aq=1:1.00は固定で変化ない
+rigayaの日記兼メモ帳 x264の--threads 参 https://rigaya34589.blog.fc2.com/blog-entry-272.html
+
+aq-mode:でうっちゃ！　－プリセット関連研究室－ - ブロマガ https://ch.nicovideo.jp/til/blomaga/ar857848
+aq-mode => 2
+AQを有効にして、ビットレート配分の差を大きめに調整するAutoVAQモード
+aq-mode => 3
+AQを有効にして、暗いシーンへの傾向も考慮したAutoVAQモード
+	@実写は効果が大きそうな気がする
+aq-strength:でうっちゃ！　－プリセット関連研究室－ - ブロマガ https://ch.nicovideo.jp/til/blomaga/ar876060
+aq-mode => 0.00 ～ 3.00
+AQの動作強度で、QPの差は数値が、小さいほど狭まり、大きいほど広がる
+b-adapt（b_strategy）:でうっちゃ！　－プリセット関連研究室－ - ブロマガ https://ch.nicovideo.jp/til/blomaga/ar876075
+b-adapt（b_strategy） => 1
+設定したBフレームの最大数から使用する枚数を高速で簡易的に判定
+b-adapt（b_strategy） => 2
+設定したBフレームの最大数から使用する枚数を低速で正確に判定
+direct（direct-pred）:でうっちゃ！　－プリセット関連研究室－ - ブロマガ https://ch.nicovideo.jp/til/blomaga/ar876929
+direct（direct-pred） => auto = 3
+ダイレクトマクロブロックの予測を有効にして、空間と時間を考慮して処理する
+プリセット関連実験机:でうっちゃ！　－プリセット関連研究室－ - ブロマガ https://ch.nicovideo.jp/til/blomaga/ar648180
+	@網羅的に説明
+
+https://en.wikibooks.org/wiki/MeGUI/x264_Settings
+https://gist.github.com/nico-lab/06be71f0c7fc311c46c93387d9902cdc
+ffmpeg -f lavfi -i testsrc2=d=1 -trellis 2 trellis2.mp4 -y
+2	ok
+ffmpeg -f lavfi -i testsrc2=d=1 -subq 5 -trellis 2 trellis2.mp4 -y
+ffmpeg -f lavfi -i testsrc2=d=1 -subq 4 -trellis 2 trellis2.mp4 -y
+ffmpeg -f lavfi -i testsrc2=d=1 -subq 1 -trellis 2 trellis2.mp4 -y
+	2はsubme:6以上
+	削除
+ffmpeg -f lavfi -i testsrc2=d=1 -subq 11 -trellis 1 trellis2.mp4 -y
+	1 以上はtrellis:2を指定する
+	10以上はtrellis:2を指定する
+ffmpeg -f lavfi -i testsrc2=d=1 -subq 10 -trellis 1 trellis2.mp4 -y
+ffmpeg -f lavfi -i testsrc2=d=1 -subq 10 -trellis 2 trellis2.mp4 -y
+ffmpeg -f lavfi -i testsrc2=d=1 -subq 11 -trellis 2 trellis2.mp4 -y
+	11まで
+
+https://sites.google.com/site/linuxencoding/x264-ffmpeg-mapping
+Recommended defaults:-deblockalpha 0 -deblockbeta 0
+	@つまり1:0:0のままでよい
+		veryslowでも1:0:0
+ffmpeg -f lavfi -i testsrc2=d=1 -deblock 1 trellis2.mp4 -y
+	1:1:1
+ffmpeg -f lavfi -i testsrc2=d=1 -deblock 1,2,2 trellis2.mp4 -y
+ffmpeg -f lavfi -i testsrc2=d=1 -deblock 1,2 trellis2.mp4 -y
+ffmpeg -f lavfi -i testsrc2=d=1 -deblock 1,2,3 trellis2.mp4 -y
+	1:1:2
+ffmpeg -f lavfi -i testsrc2=d=1 -deblock 0 trellis2.mp4 -y
+	1:0:0
+
+ffmpeg -f lavfi -i testsrc2=d=1 -deblockalpha  1 -deblockbeta  0 trellis2.mp4 -y
 
 
 "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi"
