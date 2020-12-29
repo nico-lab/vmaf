@@ -10,11 +10,29 @@ vmaf連携方法
 一括処理スクリプト
 	シェルで書く
 
-fpsのタイムコードをPHPで配列に入れて字幕をフレーム毎に書き込む時間を指定する
-内容は時間、フレーム番号、vmafM、など
+fpsのタイムコードをPHPで配列に入れてsrt字幕をフレーム毎に書き込む時間を指定する
+内容は時間、フレーム番号、vmafM、ノイズ係数（drawtext）など
+	https://nico-lab.net/vmafmotion_with_ffmpeg/
+	https://nico-lab.net/bitplanenoise_with_ffmpeg/
+
+
+・番号(１開始)
+・表示開始時間 --> 表示終了時間（hh:mm:ss,ms(３桁)）
+・表示文字
+・改行（文字ブロックと文字ブロックの間は改行して一行空欄を入れる必要がある）
+
+https://uogiawi.hatenadiary.org/entry/20150319/1426738108
+{\an6}{\fe128}{\fn@MS UI Gothic}{\pos(355,178)}{\frz270}縦書きのテクスト{\an}
+	srtにそのまま入力しても横書きになる
+
+"C:\Users\Owner\Downloads\f\ffmpeg.exe" -f lavfi -i color=d=10:s=320x188:r=24/1.001:c=white foo.mp4 -y
+C:\Users\Owner\Downloads\f\ffmpeg.exe -i foo.mp4 -i foo.srt -c copy bar.mp4 -y
+C:\Users\Owner\Downloads\f\ffmpeg.exe  -i foo.srt bar.srt -y
 ffmpeg -f lavfi -i color=d=3600:s=16x16:r=24/1.001 24p-3600.mp4
 ffprobe -v error -i 24p-3600.mp4 -select_streams v:0 -show_frames -show_entries frame=pkt_pts_time -of csv=p=0 > output.csv
 小数6桁まで
+
+
 
 Optunaを使ってFFmpegのエンコードパラメータを最適化してみる https://gist.github.com/sile/8aa1ff7808dd55298f51dd70c8b83092
 
