@@ -1,0 +1,165 @@
+# 2月からの準備
+パラメーターの候補
+	https://gist.github.com/nico-lab/06be71f0c7fc311c46c93387d9902cdc
+	https://ch.nicovideo.jp/til
+		ABR、CFRどちらを使うかで背一定が変わる
+		x264つかえばCFRだとzone、qpfileでフレーム毎に品質を変えられる
+	https://nico-lab.net/setting_libvpx-vp9_with_ffmpeg/
+vmaf連携方法
+	https://nico-lab.net/libvmaf_with_ffmpeg/
+一括処理スクリプト
+	シェルで書く
+
+fpsのタイムコードをPHPで配列に入れて字幕をフレーム毎に書き込む時間を指定する
+内容は時間、フレーム番号、vmafM、など
+ffmpeg -f lavfi -i color=d=3600:s=16x16:r=24/1.001 24p-3600.mp4
+ffprobe -v error -i 24p-3600.mp4 -select_streams v:0 -show_frames -show_entries frame=pkt_pts_time -of csv=p=0 > output.csv
+小数6桁まで
+
+Optunaを使ってFFmpegのエンコードパラメータを最適化してみる https://gist.github.com/sile/8aa1ff7808dd55298f51dd70c8b83092
+
+
+"C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi"
+
+ultrafast, veryfast, faster, fast, medium, slow, slower, veryslow
+ffmpeg -report  -i aa -an  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset ultrafast ultrafast.mp4
+ffmpeg -report  -i aa -an  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset veryfast veryfast.mp4
+ffmpeg -report  -i aa -an  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset faster faster.mp4
+ffmpeg -report  -i aa -an  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset fast fast.mp4
+ffmpeg -report  -i aa -an  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset medium medium.mp4
+ffmpeg -report  -i aa -an  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset slow slow.mp4
+ffmpeg -report  -i aa -an  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset slower slower.mp4
+ffmpeg -report  -i aa -an  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset veryslow veryslow.mp4
+
+## 2pass
+ffmpeg -report  -i aa -an  -pass 1  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset ultrafast -f null -
+ffmpeg -report  -i aa -an  -pass 2  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset ultrafast ultrafast.mp4
+ffmpeg -report  -i aa -an  -pass 1  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset veryfast -f null -
+ffmpeg -report  -i aa -an  -pass 2  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset veryfast veryfast.mp4
+ffmpeg -report  -i aa -an  -pass 1  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset faster -f null -
+ffmpeg -report  -i aa -an  -pass 2  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset faster faster.mp4
+ffmpeg -report  -i aa -an  -pass 1  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset fast -f null -
+ffmpeg -report  -i aa -an  -pass 2  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset fast fast.mp4
+ffmpeg -report  -i aa -an  -pass 1  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset medium -f null -
+ffmpeg -report  -i aa -an  -pass 2  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset medium medium.mp4
+ffmpeg -report  -i aa -an  -pass 1  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset slow -f null -
+ffmpeg -report  -i aa -an  -pass 2  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset slow slow.mp4
+ffmpeg -report  -i aa -an  -pass 1  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset slower -f null -
+ffmpeg -report  -i aa -an  -pass 2  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset slower slower.mp4
+ffmpeg -report  -i aa -an  -pass 1  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset veryslow -f null -
+ffmpeg -report  -i aa -an  -pass 2  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset veryslow veryslow.mp4
+
+
+# スクリプトでビルドしたのがモデルデータを読み込めない
+ffmpeg -report  -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an  -pass 1  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset ultrafast -f null -
+ffmpeg -report  -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an  -pass 2  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset ultrafast ultrafast.mp4
+ffmpeg -report  -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an  -pass 1  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset veryfast -f null -
+ffmpeg -report  -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an  -pass 2  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset veryfast veryfast.mp4
+ffmpeg -report  -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an  -pass 1  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset faster -f null -
+ffmpeg -report  -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an  -pass 2  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset faster faster.mp4
+ffmpeg -report  -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an  -pass 1  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset fast -f null -
+ffmpeg -report  -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an  -pass 2  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset fast fast.mp4
+ffmpeg -report  -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an  -pass 1  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset medium -f null -
+ffmpeg -report  -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an  -pass 2  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset medium medium.mp4
+ffmpeg -report  -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an  -pass 1  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset slow -f null -
+ffmpeg -report  -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an  -pass 2  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset slow slow.mp4
+ffmpeg -report  -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an  -pass 1  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset slower -f null -
+ffmpeg -report  -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an  -pass 2  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset slower slower.mp4
+ffmpeg -report  -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an  -pass 1  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset veryslow -f null -
+ffmpeg -report  -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an  -pass 2  -c:v libx264 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -preset veryslow veryslow.mp4
+"C:\Downloads\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -report -i ultrafast.mp4 -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_float_v0.6.1.pkl:psnr=1:log_path=ultrafast.csv:log_fmt=csv" -an -f null -
+"C:\Downloads\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -report -i veryfast.mp4 -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_float_v0.6.1.pkl:psnr=1:log_path=veryfast.csv:log_fmt=csv" -an -f null -
+"C:\Downloads\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -report -i faster.mp4 -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_float_v0.6.1.pkl:psnr=1:log_path=faster.csv:log_fmt=csv" -an -f null -
+"C:\Downloads\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -report -i fast.mp4 -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_float_v0.6.1.pkl:psnr=1:log_path=fast.csv:log_fmt=csv" -an -f null -
+"C:\Downloads\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -report -i medium.mp4 -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_float_v0.6.1.pkl:psnr=1:log_path=medium.csv:log_fmt=csv" -an -f null -
+"C:\Downloads\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -report -i slow.mp4 -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_float_v0.6.1.pkl:psnr=1:log_path=slow.csv:log_fmt=csv" -an -f null -
+"C:\Downloads\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -report -i slower.mp4 -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_float_v0.6.1.pkl:psnr=1:log_path=slower.csv:log_fmt=csv" -an -f null -
+"C:\Downloads\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -report -i veryslow.mp4 -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_float_v0.6.1.pkl:psnr=1:log_path=veryslow.csv:log_fmt=csv" -an -f null -
+
+
+
+
+# VP9
+ffmpeg -report  -i aa -an  -c:v libvpx-vp9 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -cpu-used 0 cpu-used-0.webm
+ffmpeg -report  -i aa -an  -c:v libvpx-vp9 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -cpu-used 1 cpu-used-1.webm
+ffmpeg -report  -i aa -an  -c:v libvpx-vp9 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -cpu-used 2 cpu-used-2.webm
+ffmpeg -report  -i aa -an  -c:v libvpx-vp9 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -cpu-used 3 cpu-used-3.webm
+ffmpeg -report  -i aa -an  -c:v libvpx-vp9 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -cpu-used 4 cpu-used-4.webm
+ffmpeg -report  -i aa -an  -c:v libvpx-vp9 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -cpu-used 5 cpu-used-5.webm
+
+## 2pass
+ffmpeg -report  -i aa -an  -pass 1 -c:v libvpx-vp9 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -cpu-used 0 -f null -
+ffmpeg -report  -i aa -an  -pass 2 -c:v libvpx-vp9 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -cpu-used 0 cpu-used-0.webm
+ffmpeg -report  -i aa -an  -pass 1 -c:v libvpx-vp9 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -cpu-used 1 -f null -
+ffmpeg -report  -i aa -an  -pass 2 -c:v libvpx-vp9 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -cpu-used 1 cpu-used-1.webm
+ffmpeg -report  -i aa -an  -pass 1 -c:v libvpx-vp9 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -cpu-used 2 -f null -
+ffmpeg -report  -i aa -an  -pass 2 -c:v libvpx-vp9 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -cpu-used 2 cpu-used-2.webm
+ffmpeg -report  -i aa -an  -pass 1 -c:v libvpx-vp9 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -cpu-used 3 -f null -
+ffmpeg -report  -i aa -an  -pass 2 -c:v libvpx-vp9 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -cpu-used 3 cpu-used-3.webm
+ffmpeg -report  -i aa -an  -pass 1 -c:v libvpx-vp9 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -cpu-used 4 -f null -
+ffmpeg -report  -i aa -an  -pass 2 -c:v libvpx-vp9 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -cpu-used 4 cpu-used-4.webm
+ffmpeg -report  -i aa -an  -pass 1 -c:v libvpx-vp9 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -cpu-used 5 -f null -
+ffmpeg -report  -i aa -an  -pass 2 -c:v libvpx-vp9 -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 600k -cpu-used 5 cpu-used-5.webm
+
+
+"C:\Downloads\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -i cpu-used-0.mkv -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_float_v0.6.1.pkl:psnr=1:log_path=cpu-used-0.csv:log_fmt=csv" -an -f null -
+"C:\Downloads\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -i cpu-used-1.mkv -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_float_v0.6.1.pkl:psnr=1:log_path=cpu-used-1.csv:log_fmt=csv" -an -f null -
+"C:\Downloads\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -i cpu-used-2.mkv -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_float_v0.6.1.pkl:psnr=1:log_path=cpu-used-2.csv:log_fmt=csv" -an -f null -
+"C:\Downloads\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -i cpu-used-3.mkv -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_float_v0.6.1.pkl:psnr=1:log_path=cpu-used-3.csv:log_fmt=csv" -an -f null -
+"C:\Downloads\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -i cpu-used-4.mkv -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_float_v0.6.1.pkl:psnr=1:log_path=cpu-used-4.csv:log_fmt=csv" -an -f null -
+"C:\Downloads\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -i cpu-used-5.mkv -i "C:\Downloads\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_float_v0.6.1.pkl:psnr=1:log_path=cpu-used-5.csv:log_fmt=csv" -an -f null -
+
+ffmpeg -h filter=libvmaf
+https://github.com/Netflix/vmaf/tree/master/model
+2020年11月22日からモデルの名前が変わっている
+<a href="https://github.com/Netflix/vmaf/pull/722">Feature/rename integer models by li-zhi · Pull Request #722 · Netflix/vmaf</a>
+
+## vmaf
+	ffprobeにはmetadataが扱えないのでffmpegを使う
+ffprobe -v error -f lavfi -i movie=conf,settb=1/AVTB,setpts=PTS-STARTPTS[main];movie=orig,settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_v0.6.1.pkl:psnr=1:log_fmt=json" -show_streams -of json > output.json
+ffprobe -f lavfi -i movie=10s.mp4,settb=1/AVTB,setpts=PTS-STARTPTS[main];movie=10s.mp4,settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_v0.6.1.pkl:psnr=1:log_fmt=json" -show_streams -of json > outpssut.json
+[libvmaf @ 0000024c3c50ac40] VMAF score: 97.453327
+
+ffmpeg -i encoded.mp4 -i original.mkv -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_v0.6.1.pkl:psnr=1:log_fmt=json" -an -f null -
+ffmpeg -i 10s.mp4 -i 10s.mp4 -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_v0.6.1.pkl:psnr=1:log_path=log.json:log_fmt=json" -an -f null -
+ffmpeg -i 10s.mp4 -i 10s.mp4 -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_v0.6.1.pkl:psnr=1:log_path=log.csv" -an -f null -
+ffmpeg -i 10s.mp4 -i 10s.mp4 -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_v0.6.1.pkl:psnr=1:log_path=log.csv:log_fmt=csv" -an -f null -
+
+
+ff -i 10s.mp4 -i 10s.mp4 -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_v0.6.1.pkl:psnr=1:log_path=log.csv:log_fmt=csv" -an -f null -
+"C:\Users\R\Desktop\master\ffmpeg-2020-11-25-git-3de3d2f5e2-essentials_build\bin\ffmpeg.exe" -i 10s.mp4 -i 10s.mp4 -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_v0.6.1.pkl:psnr=1:log_path=log.csv:log_fmt=csv" -an -f null -
+"C:\Users\R\Desktop\master\ffmpeg-N-100111-g263b98bbbd-win64-gpl\bin\ffmpeg.exe" -i 10s.mp4 -i 10s.mp4 -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_v0.6.1.pkl:psnr=1:log_path=log.csv:log_fmt=csv" -an -f null -
+ok
+"C:\Users\R\Desktop\master\ffmpeg-N-100405-gbf4b9e933f-win64-gpl\bin\ffmpeg.exe" -i 10s.mp4 -i 10s.mp4 -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_v0.6.1.pkl:psnr=1:log_path=log.csv:log_fmt=csv" -an -f null -
+ok	Auto-Build 2020-12-13 12:35
+"C:\Users\R\Desktop\master\ffmpeg-N-100421-g1eb751955e-win64-gpl\bin\ffmpeg.exe" -i 10s.mp4 -i 10s.mp4 -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_v0.6.1.pkl:psnr=1:log_path=log.csv:log_fmt=csv" -an -f null -
+ok	Auto-Build 2020-12-18 12:44
+"C:\Users\R\Desktop\master\ffmpeg-N-100433-g50a9210739-win64-gpl\bin\ffmpeg.exe" -i 10s.mp4 -i 10s.mp4 -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_v0.6.1.pkl:psnr=1:log_path=log.csv:log_fmt=csv" -an -f null -
+ok	Auto-Build 2020-12-19 12:43
+"C:\Users\R\Desktop\master\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -i 10s.mp4 -i 10s.mp4 -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_v0.6.1.pkl:psnr=1:log_path=log.csv:log_fmt=csv" -an -f null -
+ok	Auto-Build 2020-12-22 12:37
+
+"C:\Users\R\Desktop\master\ffmpeg-N-100459-ga7f9b3b954-win64-gpl\bin\ffmpeg.exe" -i 10s.mp4 -i 10s.mp4 -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_v0.6.1.pkl:psnr=1:log_path=log.csv:log_fmt=csv" -an -f null -
+ng	Auto-Build 2020-12-23 12:35
+"C:\Users\R\Desktop\master\ffmpeg-N-100461-gb0a882cc93-win64-gpl\bin\ffmpeg.exe" -i 10s.mp4 -i 10s.mp4 -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_v0.6.1.pkl:psnr=1:log_path=log.csv:log_fmt=csv" -an -f null -
+ng	Auto-Build 2020-12-24 12:38
+"C:\Users\R\Desktop\master\ffmpeg-N-100470-g5b48d2af43-win64-gpl\bin\ffmpeg.exe" -i 10s.mp4 -i 10s.mp4 -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_v0.6.1.pkl:psnr=1:log_path=log.csv:log_fmt=csv" -an -f null -
+ng	Auto-Build 2020-12-26 12:36
+
+
+"C:\Users\R\Desktop\master\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -i 10s.mp4 -i 10s.mp4 -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_float_v0.6.1.pkl:psnr=1:log_path=log.csv:log_fmt=csv" -an -f null -
+ok	Auto-Build 2020-12-22 12:37
+"C:\Users\R\Desktop\master\ffmpeg-N-100459-ga7f9b3b954-win64-gpl\bin\ffmpeg.exe" -i 10s.mp4 -i 10s.mp4 -filter_complex "[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]libvmaf=vmaf_float_v0.6.1.pkl:psnr=1:log_path=log.csv:log_fmt=csv" -an -f null -
+ng	Auto-Build 2020-12-23 12:35
+
+ffmpeg.exe -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080 -filter_complex "split,libvmaf=vmaf_float_v0.6.1.pkl:psnr=1:log_path=log.csv:log_fmt=csv" -f null -
+
+"C:\Users\R\Desktop\master\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080 -filter_complex "split,libvmaf=vmaf_float_v0.6.1.pkl:psnr=1:log_path=log.csv:log_fmt=csv" -f null -
+"C:\Users\R\Desktop\master\ffmpeg-N-100459-ga7f9b3b954-win64-gpl\bin\ffmpeg.exe" -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080 -filter_complex "split,libvmaf=vmaf_float_v0.6.1.pkl:psnr=1:log_path=log.csv:log_fmt=csv" -f null -
+"C:\Users\R\Desktop\master\ffmpeg-N-100459-ga7f9b3b954-win64-gpl\bin\ffmpeg.exe" -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080 -filter_complex "split,libvmaf=vmaf_float_v0.6.1.json:psnr=1:log_path=log.csv:log_fmt=csv" -f null -
+"C:\Users\R\Desktop\master\ffmpeg-N-100459-ga7f9b3b954-win64-gpl\bin\ffmpeg.exe" -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080 -filter_complex "split,libvmaf=vmaf_float_v0.6.1.pkl.model:psnr=1:log_path=log.csv:log_fmt=csv" -f null -
+
+https://github.com/BtbN/FFmpeg-Builds/releases/tag/autobuild-2020-12-22-12-37
+
+https://github.com/BtbN/FFmpeg-Builds/releases/tag/autobuild-2020-12-23-12-35
+
