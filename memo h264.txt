@@ -1,0 +1,37 @@
+https://stackoverflow.com/questions/40668616/whats-the-difference-with-crf-and-qp-in-ffmpeg
+	http://slhck.info/articles/crf
+
+https://en.wikibooks.org/wiki/MeGUI/x264_Settings
+
+https://rigaya34589.blog.fc2.com/blog-category-1.html
+rigayaの日記兼メモ帳 x264 エンコード実験 --weightp 2 https://rigaya34589.blog.fc2.com/blog-entry-39.html
+重み付け予測ということはとりあえず、フェードとかに強くなるらしいよ？ まず、フェードとか多そうな動画を探してみた。
+rigayaの日記兼メモ帳 x264 エンコード実験 --bframes編 https://rigaya34589.blog.fc2.com/blog-entry-8.html
+	slowerからb_adapt=2になる
+rigayaの日記兼メモ帳 x264 エンコード実験 --subme編 https://rigaya34589.blog.fc2.com/blog-entry-6.html
+subme 9 と 10 がなにも変わらんのは--aq-strength を 0 にしたせいかな。
+なんか subme 10 って AQ を使うらしいので。
+	aq=1:1.00は固定で変化ない
+rigayaの日記兼メモ帳 x264の--threads 参 https://rigaya34589.blog.fc2.com/blog-entry-272.html
+
+aq-mode:でうっちゃ！　－プリセット関連研究室－ - ブロマガ https://ch.nicovideo.jp/til/blomaga/ar857848
+aq-mode => 2
+AQを有効にして、ビットレート配分の差を大きめに調整するAutoVAQモード
+aq-mode => 3
+AQを有効にして、暗いシーンへの傾向も考慮したAutoVAQモード
+	@実写は効果が大きそうな気がする
+	実写向けに aq_strength=2.0
+aq-strength:でうっちゃ！　－プリセット関連研究室－ - ブロマガ https://ch.nicovideo.jp/til/blomaga/ar876060
+aq-mode => 0.00 ～ 3.00
+AQの動作強度で、QPの差は数値が、小さいほど狭まり、大きいほど広がる
+b-adapt（b_strategy）:でうっちゃ！　－プリセット関連研究室－ - ブロマガ https://ch.nicovideo.jp/til/blomaga/ar876075
+b-adapt（b_strategy） => 1
+設定したBフレームの最大数から使用する枚数を高速で簡易的に判定
+b-adapt（b_strategy） => 2
+設定したBフレームの最大数から使用する枚数を低速で正確に判定
+direct（direct-pred）:でうっちゃ！　－プリセット関連研究室－ - ブロマガ https://ch.nicovideo.jp/til/blomaga/ar876929
+direct（direct-pred） => auto = 3
+ダイレクトマクロブロックの予測を有効にして、空間と時間を考慮して処理する
+プリセット関連実験机:でうっちゃ！　－プリセット関連研究室－ - ブロマガ https://ch.nicovideo.jp/til/blomaga/ar648180
+	@網羅的に説明
+

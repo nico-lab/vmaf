@@ -1,0 +1,35 @@
+# vmaf	https://nico-lab.net/libvmaf_with_ffmpeg/
+	phone_model=1	がモバイル向けで既定値はPC、TV向け
+## モデルの差異を調べる
+	b_
+	https://github.com/Netflix/vmaf/blob/2e1b24d8344c8e8dbb770699ac5beae8b11463d4/python/vmaf/core/quality_runner.py#L941
+		BOOTSTRAP	https://ja.wikipedia.org/wiki/%E3%83%96%E3%83%BC%E3%83%88%E3%82%B9%E3%83%88%E3%83%A9%E3%83%83%E3%83%97
+			外部の入力を必要とせずに実行される、自己開始型のプロセスを指す。
+		https://github.com/Netflix/vmaf/blob/master/resource/doc/conf_interval.md
+			b_は使わなくてもよさそう
+	float_
+	https://netflixtechblog.com/toward-a-better-quality-metric-for-the-video-community-7ed94e752a30
+		高速化している
+	neg（no enhancement gain
+	https://netflixtechblog.com/toward-a-better-quality-metric-for-the-video-community-7ed94e752a30
+		一部のコーデックによるゲインを無視する
+		The NEG mode is our first step toward more accurately quantifying the perceptual gain without image enhancement. 
+			NEGモードは、画像強調を行わない場合の知覚ゲインをより正確に定量化するための第一歩です
+		https://docs.google.com/document/d/1dJczEhXO0MZjBSNyKmd3ARiCTdFVMNPBykH4_HMPoyY/edit#heading=h.oaikhnw46pw5
+vmaf_float_v0.6.1.json
+vmaf_float_v0.6.1neg.json
+vmaf_v0.6.1neg.json
+
+https://github.com/Netflix/vmaf
+https://netflixtechblog.com/toward-a-practical-perceptual-video-quality-metric-653f208b9652
+https://netflixtechblog.com/high-quality-video-encoding-at-scale-d159db052746
+https://docs.google.com/document/d/1dJczEhXO0MZjBSNyKmd3ARiCTdFVMNPBykH4_HMPoyY/edit#
+https://netflixtechblog.com/toward-a-better-quality-metric-for-the-video-community-7ed94e752a30
+
+
+https://github.com/BtbN/FFmpeg-Builds/releases/tag/autobuild-2020-12-22-12-37
+https://github.com/BtbN/FFmpeg-Builds/releases/tag/autobuild-2020-12-23-12-35
+http://www.itu.int/dms_pub/itu-r/opb/rep/R-REP-BT.2246-2-2012-PDF-E.pdf
+https://forum.doom9.org/showthread.php?p=1932106#post1932106
+	https://www.avsforum.com/threads/2020-lg-oled-cx-gx-owners-thread-faq-posts-1-6-no-price-talk.3119288/page-854#post-60360409
+	https://www.avsforum.com/threads/36-bit-mgvc-blu-ray-only-in-japan.1486405/

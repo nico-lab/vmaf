@@ -1,0 +1,7 @@
+cd "C:\Users\R\Desktop\master\ffmpeg-N-100546-g2c6f532e0a-win64-gpl\bin"
+ffmpeg -report -f lavfi -i color=d=1  -pass 1 -c:v libvpx-vp9 -b:v 6000k -cpu-used 5 -passlogfile hoge -f null -
+ffmpeg -report -f lavfi -i color=d=1  -pass 2 -c:v libvpx-vp9 -b:v 6000k -cpu-used 5 -passlogfile hoge foo.webm -y
+# これでcdの場所にログファイルを出力してそのログファイルを参照する
+
+pause
+timeout 5000

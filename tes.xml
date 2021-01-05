@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<VMAF version="1.5.3">
+	<params model="" scaledWidth="1920" scaledHeight="1080" subsample="1" num_bootstrap_models="0" bootstrap_model_list_str="" />
+	<fyi numOfFrames="25" aggregateVMAF="97.428" execFps="24.2642" timeTaken="1.03032" />
+	<frames>
+		<frame frameNum="0" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="1" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="2" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="3" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="4" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="5" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="6" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="7" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="8" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="9" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="10" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="11" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="12" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="13" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="14" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="15" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="16" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="17" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="18" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="19" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="20" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="21" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="22" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="23" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+		<frame frameNum="24" adm2="1" motion2="0" vif_scale0="1" vif_scale1="1" vif_scale2="1" vif_scale3="1" vmaf="97.428" />
+	</frames>
+</VMAF>

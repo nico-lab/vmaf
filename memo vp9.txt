@@ -1,0 +1,17 @@
+undershoot-pct
+    Set datarate undershoot (min) percentage of the target bitrate.
+    25
+overshoot-pct
+    Set datarate overshoot (max) percentage of the target bitrate.
+    25
+slices (token-parts)
+    Note that FFmpeg’s slices option gives the total number of partitions, while vpxenc’s token-parts is given as log2(partitions).
+max-intra-rate
+    Set maximum I-frame bitrate as a percentage of the target bitrate. A value of 0 means unlimited.
+force_key_frames
+    VPX_EFLAG_FORCE_KF
+
+-aq-mode
+Set adaptive quantization mode (0: off (default), 1: variance 2: complexity, 3: cyclic refresh, 4: equator360). 
+-tune-content
+    Set content type: default (0), screen (1), film (2). 

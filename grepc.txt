@@ -1,0 +1,58 @@
+grepでこういう時はどうする? - Qiita https://qiita.com/hirohiro77/items/771ffb64dddceabf69a3
+
+vmafエンコードしたログのパースする方法を考える
+	エンコログ（テキスト形式なのでgrepなどして対象行だけ拾ってから内容を削る
+		ログ名を固定にしないとファイル名で困る
+	vmafスコア（最小、標準偏差、平均
+[libx264 @ 00000277e13a4440] 
+	この部分の削除をしたい
+	PHPから正規表現で[]内を削除すればよさそう
+
+video:436295kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.026610%
+  Output stream #0:0 (video): 14315 frames encoded; 14315 packets muxed (446766192 bytes); 
+出力bytesにoverheadを乗算するとプロパティで見られるサイズになる
+446766192*(1+0.00026610)
+446885076.484
+446885077 バイト)
+ビットレートあたりで計算するならoverheadを除外した方が正確
+
+set FFREPORT=file=ffreport.txt:level=32
+set FFREPORT=file=ffreport.log:level=32
+	ファイル名が固定なので入力ファイルを書き直す必要が無い
+	ログは残しておきたいからcpコマンドを併用する
+
+
+grep frame=14315 ffmpeg-20201227-113620.log > tt.txt
+grep "frame I:" ffmpeg-20201227-113620.log >> tt.txt
+grep "i8c dc,h,v,p:" ffmpeg-20201227-113620.log >> tt.txt
+grep "ref B L1:" ffmpeg-20201227-113620.log >> tt.txt
+
+# libx264
+grep "frame=14315" input.log > name.txt
+grep "frame I" input.log >> name.txt
+grep "frame P" input.log >> name.txt
+grep "frame B" input.log >> name.txt
+grep "consecutive B-frames" input.log >> name.txt
+grep "mb I  I16..4" input.log >> name.txt
+grep "mb P  I16..4" input.log >> name.txt
+grep "mb B  I16..4" input.log >> name.txt
+grep "8x8 transform intra" input.log >> name.txt
+grep "direct mvs  spatial" input.log >> name.txt
+grep "coded y,uvDC,uvAC intra" input.log >> name.txt
+grep "i16 v,h,dc,p" input.log >> name.txt
+grep "i8 v,h,dc,ddl,ddr,vr,hd,vl,hu" input.log >> name.txt
+grep "i4 v,h,dc,ddl,ddr,vr,hd,vl,hu" input.log >> name.txt
+grep "i8c dc,h,v,p" input.log >> name.txt
+grep "Weighted P-Frames" input.log >> name.txt
+grep "ref P L0" input.log >> name.txt
+grep "ref B L0" input.log >> name.txt
+grep "ref B L1" input.log >> name.txt
+grep "overhead" input.log > name.txt
+grep "packets muxed" input.log > name.txt
+
+# vp9
+grep "frame=14315" input.log > name.txt
+grep "overhead" input.log > name.txt
+grep "packets muxed" input.log > name.txt
+
+

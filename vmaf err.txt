@@ -1,0 +1,114 @@
+"C:\Users\R\Deskvmaf\master\ffmpeg-N-100546-g2c6f532e0a-win64-gpl\bin\ffmpeg.exe" -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080 -filter_complex "split,libvmaf=vmaf_float_v0.6.1.json:log_path=log.csv:log_fmt=csv" -f null - > hoge.txt 2>&1
+"C:\Users\R\Deskvmaf\master\ffmpeg-N-100546-g2c6f532e0a-win64-gpl\bin\ffmpeg.exe" -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080 -filter_complex "split,libvmaf=vmaf_v0.6.1.pkl:log_path=log.csv:log_fmt=csv" -f null - > hoge.txt 2>&1
+
+\:/Users/R/Deskvmaf/master/vmaf_float_v0.6.1.json':log_path=log.csv:log_fmt=csv" -f null - > hoge.txt 2>&1
+"C:\Users\R\Deskvmaf\master\ffmpeg-N-100459-ga7f9b3b954-win64-gpl\bin\ffmpeg.exe" -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080 -filter_complex "split,libvmaf=vmaf_float_v0.6.1.json:log_path=log.csv:log_fmt=csv" -f null - > hoge.txt 2>&1
+"C:\Users\R\Deskvmaf\master\ffmpeg-N-100459-ga7f9b3b954-win64-gpl\bin\ffmpeg.exe" -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080 -filter_complex "split,libvmaf=vmaf_float_v0.6.1.pkl:log_path=log.csv:log_fmt=csv" -f null - > hoge.txt 2>&1
+100459以降は読み込めない
+
+"C:\Users\R\Deskvmaf\master\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080 -filter_complex "split,libvmaf=vmaf_v0.6.1.pkl:log_path=log.csv:log_fmt=csv" -f null -
+"C:\Users\R\Deskvmaf\master\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080 -filter_complex "split,libvmaf=vmaf_float_v0.6.1.pkl:log_path=log.csv:log_fmt=csv" -f null -
+"C:\Users\R\Deskvmaf\master\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080 -filter_complex "split,libvmaf=vmaf_float_v0.6.1.pkl:log_path=log.csv:log_fmt=csv" -f null -
+"C:\Users\R\Deskvmaf\master\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg.exe" -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080 -filter_complex "split,libvmaf=vmaf_float_v0.6.1neg.pkl:log_path=log.csv:log_fmt=csv" -f null -
+100455以前は.pklで読み込める。.jsonは読み込めない。floatは名前が変わっただけ
+
+
+"C:\Users\R\Deskvmaf\master\ffmpeg-2021-01-01-git-63505fc60a-full_build\bin\ffmpeg.exe" -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080 -filter_complex "split,libvmaf=vmaf_float_v0.6.1.json:log_path=log.csv:log_fmt=csv" -f null - > hoge.txt 2>&1
+
+https://nico-lab.net/about-ffmpeg/#i-20
+https://github.com/Netflix/vmaf/blob/master/resource/doc/ffmpeg.md
+https://trac.ffmpeg.org/ticket/9047#comment:10
+F:\vmaf
+
+-lavfi "libvmaf=log_fmt=xml:model_path='D\:/VMAF v2.1.0/vmaf_v0.6.1.json':log_path='F\:/TEST/test.xml'"
+
+'C\:/Users/R/Deskvmaf/master/vmaf_float_v0.6.1.json'
+"C:\Users\R\Deskvmaf\master\ffmpeg-N-100459-ga7f9b3b954-win64-gpl\bin\ffmpeg.exe" -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080 -filter_complex "split,libvmaf='C
+movie='L\:/Cache/420p.mp4'
+'F\:/vmaf/vmaf_float_v0.6.1.json'
+ffmpeg.exe -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080 -filter_complex "split,libvmaf=log_fmt=xml:model_path='F\:/vmaf/vmaf_float_v0.6.1.json':log_path='F\:/vmaf/vmaf_float_v0.6.1.xml' -f null -
+ffmpeg.exe -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080 -filter_complex "split,libvmaf=log_fmt=xml:model_path='F\:/vmaf/vmaf_float_v0.6.1.json'" -f null -
+ffmpeg.exe -v 9 -loglevel 99 -f lavfi -i "color=d=1:s=1920x1080,split,libvmaf=log_fmt=xml:model_path='F\:/vmaf/vmaf_float_v0.6.1.json'" -f null -
+ffmpeg.exe -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080,split,libvmaf=log_fmt=xml:model_path='F\:/vmaf/vmaf_float_v0.6.1.json' -f null -
+ffmpeg.exe -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080 -f lavfi -i color=d=1:s=1920x1080 -lavfi "[0:v]setpts=PTS-STARTPTS[reference];[1:v]setpts=PTS-STARTPTS[distorted];[distorted][reference]libvmaf=log_fmt=xml:model_path='F\:/vmaf/vmaf_float_v0.6.1.json'" -f null -
+ffmpeg.exe -v 9 -loglevel 99 -f lavfi -i color=d=1:s=1920x1080 -f lavfi -i color=d=1:s=1920x1080 -lavfi "[0:v]setpts=PTS-STARTPTS[reference];[1:v]setpts=PTS-STARTPTS[distorted];[distorted][reference]libvmaf=log_fmt=xml:model_path='F\:/vmaf/vmaf_v0.6.1.json'" -f null -
+ffmpeg.exe -f lavfi -i color=d=1:s=1920x1080 -f lavfi -i color=d=1:s=1920x1080 -lavfi "[0:v]setpts=PTS-STARTPTS[reference];[1:v]setpts=PTS-STARTPTS[distorted];[distorted][reference]libvmaf=log_fmt=xml:model_path='F\:/vmaf/vmaf_v0.6.1.json'" -f null -
+
+ffmpeg.exe -f lavfi -i color=d=1:s=1920x1080 -f lavfi -i color=d=1:s=1920x1080 -lavfi "[0:v]setpts=PTS-STARTPTS[reference];[1:v]setpts=PTS-STARTPTS[distorted];[distorted][reference]libvmaf=log_fmt=csv:model_path='F\:/vmaf/vmaf_v0.6.1.json':log_path='F\:/vmaf/test.csv" -f null -
+ok
+ffmpeg.exe -f lavfi -i color=d=1:s=1920x1080 -f lavfi -i color=d=1:s=1920x1080 -lavfi "[0:v]setpts=PTS-STARTPTS[reference];[1:v]setpts=PTS-STARTPTS[distorted];[distorted][reference]libvmaf=log_fmt=csv:model_path='F\:/vmaf/vmaf_v0.6.1neg.json':log_path='F\:/vmaf/test_flat.csv" -f null -
+neg はok
+
+ffmpeg.exe -f lavfi -i color=d=1:s=1920x1080 -f lavfi -i color=d=1:s=1920x1080 -lavfi "[0:v]setpts=PTS-STARTPTS[reference];[1:v]setpts=PTS-STARTPTS[distorted];[distorted][reference]libvmaf=log_fmt=csv:model_path='F\:/vmaf/vmaf_float_v0.6.1.json':log_path='F\:/vmaf/test_flat.csv" -f null - > hoge.txt 2>&1
+ffmpeg.exe -f lavfi -i color=d=1:s=1920x1080 -f lavfi -i color=d=1:s=1920x1080 -lavfi "[0:v]setpts=PTS-STARTPTS[reference];[1:v]setpts=PTS-STARTPTS[distorted];[distorted][reference]libvmaf=log_fmt=csv:model_path='F\:/vmaf/vmaf_float_v0.6.1neg.json':log_path='F\:/vmaf/test_flat.csv" -f null - > hoge.txt 2>&1
+floatはエラーになる
+
+##
+Thanks for testing. I retried with full path.
+
+Without float models are ok.
+ffmpeg.exe -f lavfi -i color=d=1:s=1920x1080 -f lavfi -i color=d=1:s=1920x1080 -lavfi "[0:v]setpts=PTS-STARTPTS[reference];[1:v]setpts=PTS-STARTPTS[distorted];[distorted][reference]libvmaf=log_fmt=csv:model_path='F\:/vmaf/vmaf_v0.6.1.json':log_path='F\:/vmaf/test.csv" -f null -
+ffmpeg.exe -f lavfi -i color=d=1:s=1920x1080 -f lavfi -i color=d=1:s=1920x1080 -lavfi "[0:v]setpts=PTS-STARTPTS[reference];[1:v]setpts=PTS-STARTPTS[distorted];[distorted][reference]libvmaf=log_fmt=csv:model_path='F\:/vmaf/vmaf_v0.6.1neg.json':log_path='F\:/vmaf/test_flat.csv" -f null -
+
+But with float models encountered an error.
+ffmpeg.exe -f lavfi -i color=d=1:s=1920x1080 -f lavfi -i color=d=1:s=1920x1080 -lavfi "[0:v]setpts=PTS-STARTPTS[reference];[1:v]setpts=PTS-STARTPTS[distorted];[distorted][reference]libvmaf=log_fmt=csv:model_path='F\:/vmaf/vmaf_float_v0.6.1.json':log_path='F\:/vmaf/test_flat.csv" -f null - 
+
+ffmpeg version 2021-01-01-git-63505fc60a-full_build-www.gyan.dev Copyright (c) 2000-2021 the FFmpeg developers
+  built with gcc 10.2.0 (Rev5, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-fontconfig --enable-iconv --enable-gnutls --enable-libxml2 --enable-gmp --enable-lzma --enable-libsnappy --enable-zlib --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-libbluray --enable-libcaca --enable-sdl2 --enable-libdav1d --enable-libzvbi --enable-librav1e --enable-libsvtav1 --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxvid --enable-libaom --enable-libopenjpeg --enable-libvpx --enable-libass --enable-frei0r --enable-libfreetype --enable-libfribidi --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-ffnvcodec --enable-nvdec --enable-nvenc --enable-d3d11va --enable-dxva2 --enable-libmfx --enable-libglslang --enable-vulkan --enable-opencl --enable-libcdio --enable-libgme --enable-libmodplug --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libshine --enable-libtheora --enable-libtwolame --enable-libvo-amrwbenc --enable-libilbc --enable-libgsm --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-ladspa --enable-libbs2b --enable-libflite --enable-libmysofa --enable-librubberband --enable-libsoxr --enable-chromaprint
+  libavutil      56. 62.100 / 56. 62.100
+  libavcodec     58.115.102 / 58.115.102
+  libavformat    58. 65.100 / 58. 65.100
+  libavdevice    58. 11.103 / 58. 11.103
+  libavfilter     7. 94.100 /  7. 94.100
+  libswscale      5.  8.100 /  5.  8.100
+  libswresample   3.  8.100 /  3.  8.100
+  libpostproc    55.  8.100 / 55.  8.100
+Input #0, lavfi, from 'color=d=1:s=1920x1080':
+  Duration: N/A, start: 0.000000, bitrate: N/A
+    Stream #0:0: Video: rawvideo (I420 / 0x30323449), yuv420p, 1920x1080 [SAR 1:1 DAR 16:9], 25 tbr, 25 tbn, 25 tbc
+Input #1, lavfi, from 'color=d=1:s=1920x1080':
+  Duration: N/A, start: 0.000000, bitrate: N/A
+    Stream #1:0: Video: rawvideo (I420 / 0x30323449), yuv420p, 1920x1080 [SAR 1:1 DAR 16:9], 25 tbr, 25 tbn, 25 tbc
+Stream mapping:
+  Stream #0:0 (rawvideo) -> setpts
+  Stream #1:0 (rawvideo) -> setpts
+  libvmaf -> Stream #0:0 (wrapped_avframe)
+Press [q] to stop, [?] for help
+libvmaf INFO `compute_vmaf()` is deprecated and will be removed in a future libvmaf version
+Output #0, null, to 'pipe:':
+  Metadata:
+    encoder         : Lavf58.65.100
+    Stream #0:0: Video: wrapped_avframe, yuv420p(progressive), 1920x1080 [SAR 1:1 DAR 16:9], q=2-31, 200 kb/s, 25 fps, 25 tbn (default)
+    Metadata:
+      encoder         : Lavc58.115.102 wrapped_avframe
+frame=    1 fps=0.0 q=-0.0 size=N/A time=00:00:00.04 bitrate=N/A speed=91.3x    libvmaf ERROR problem loading feature extractors from model file: F:/vmaf/vmaf_float_v0.6.1.json
+[Parsed_libvmaf_2 @ 00000233e3fe2ac0] libvmaf encountered an error, check log for details
+Error while filtering: Invalid argument
+Failed to inject frame into filter network: Invalid argument
+Error while processing the decoded data for stream #1:0
+Conversion failed!
+
+files put on F drive.
+F:\vmaf
+ffmpeg.exe
+other_models
+vmaf_4k_rb_v0.6.2
+vmaf_4k_v0.6.1.json
+vmaf_4k_v0.6.1.pkl
+vmaf_4k_v0.6.1.pkl.model
+vmaf_b_v0.6.3.json
+vmaf_float_4k_v0.6.1.json
+vmaf_float_b_v0.6.3
+vmaf_float_b_v0.6.3.json
+vmaf_float_v0.6.1.json
+vmaf_float_v0.6.1.pkl
+vmaf_float_v0.6.1.pkl.model
+vmaf_float_v0.6.1neg.json
+vmaf_float_v0.6.1neg.pkl
+vmaf_float_v0.6.1neg.pkl.model
+vmaf_rb_v0.6.2
+vmaf_rb_v0.6.3
+vmaf_v0.6.1.json
+vmaf_v0.6.1neg.json
+

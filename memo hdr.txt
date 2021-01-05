@@ -1,0 +1,133 @@
+https://twitter.com/toru_ver15/status/1342992253619372032
+http://www.brucelindbloom.com/
+https://twitter.com/toru_ver15/status/1337365869668618242
+
+
+https://trev16.hatenablog.com/entry/2021/01/01/152736
+	Google Chrome での動画再生のカラーマネジメントに関する調査をしたい
+https://trac.ffmpeg.org/ticket/8074
+https://superuser.com/questions/1518896/ffmpeg-set-a-custom-gamma-value
+-movflags write_colr+write_gama -mov_gamma 2.4
+https://superuser.com/questions/1405177/ffmpeg-how-to-handle-color-range-conversions
+
+4K・HDR作品を再生したい | U-NEXTヘルプセンター https://help.unext.jp/guide/detail/android-app-setup-for-playing-4k-content
+ドルビーアトモスでのライブ配信とは | U-NEXTヘルプセンター https://help.unext.jp/guide/detail/what-is-dolby-atmos-for-live
+
+https://note.com/animehdr
+SDRとHDR。そもそも何が違う？｜4K HDR anime channel｜note https://note.com/animehdr/n/n5d2888e1561c
+想定する色や輝度のレンジが違う
+HDRはSDRよりも幅広い輝度情報を持っている、という大嘘。｜4K HDR anime channel｜note https://note.com/animehdr/n/n6af9faed32a4
+大事なことは明るい部分の輝度が何cd/m2あるかということだ。
+右に波形を表示しているが、200cd/m2も超えるような輝度まで使用しているのが分かる。(*輝度はGの依存が大きい)
+	輝度をどのように調べるか
+これはst2084をそのままSDRで表示した例である。
+先程のショットと異なり全体的に暗くコントラストが低い。これはガンマが異なることに依存しているだけで、SDRだから高輝度部がクリップされるなどありえない
+SDRの標準？｜4K HDR anime channel｜note https://note.com/animehdr/n/nf0833460ccab
+bt.709について言えばガンマはレガシー(1.9相当)であるし、bt.1886であればガンマは2.4だ。
+例えば0.01や0.117cd/m2を最低黒とし、基準白は100cd/m2である。
+間違えてはならないのはこの範囲の明るさしかSDRには入らないのではなく、この範囲で表示するのを基準とするというだけ
+どのOETF当ててるか＝どのEOTFなら正しく見えるか、を意味するのがインプットカラースペースで
+どのEOTFで見るのを想定しているか、つまりどのOETF当てるかがアウトプットカラースペースである。
+このOETF/EOTFは常に対の関係にあり、同じであることが好ましい。
+HDRやログではこの辺りが分かりやすい。間違えると一発で画が破綻する。
+一方SDRでは複雑で。SDRにガンマ値の定義がなく、違う物を当ててしまってもそれなりに見えてしまう。
+EOTF/OETFの違いをシステムガンマやトータルガンマと呼ぶ。
+改めてSDRにおけるガンマの定義だが、上に書いてる通り、定義は無い。一番間違いないのはレガシー(1.9)
+一般にガンマを強くすればするほど暗くなり、色がどぎつく派手になる傾向がある。
+一番確実なのは1.9で入れて自分で黒側調整することである。これなら問題を最大限避けることが出来るだろう。
+例えばカラーマネジメントちゃんとしてない状態で映像扱うと、それこそsRGBでやってる可能性もある。
+それを放送なり配信で見ると、2.2のテレビはいいが、2.4だと黒がきついし1.9だと黒が浮くようになる。
+https://www.youtube.com/watch?v=k9aCF4gcPzM
+	HDR再生確認
+	左下は理想的なSDRで、ガンマを強くかけ(2.4)、更に203cd/m2に調整した上で彩度も調整
+HDRプレビュー(疑似)、出来ました｜4K HDR anime channel｜note https://note.com/animehdr/n/n09a9695a0d0d
+st2084/2020出力時にはカラースペース変換を無効にしておく。HLGの波形でst2084を出力すると見え方がおかしくなる
+HDRでプレビュー、出来ません？｜4K HDR anime channel｜note https://note.com/animehdr/n/nde21155ab715
+Win版のResolve Studioはソフト内のプレビューがHDR非対応であり、また無料版ではソフト内でのHDRプレビューそのものに対応しない。ただしDeckLinkからHDRの波形で出力することは可能なため、SDIやHDMIで接続し、EOTFを適切に設定すればHDRのプレビューが出来る。
+明るいSDRと暗いHDR、そしてOLEDという半端物｜4K HDR anime channel｜note https://note.com/animehdr/n/nbd8a47b0b844
+より広く輝度レンジを保ちつつ、必要な明るさと色を出せるのが良いカラリストの条件
+ハイエンドLCD TV、可能であればPA32UCXを推奨
+OLEDの性能が全白600cd/m2ピーク輝度1200cd/m2、rec.2020 90%超。更に3年の焼付き保証と5000時間までの800cd/m2表示を保証し、黒潰れがないことを確約出来るのならば導入しても良いし
+HDR映像の作り方(その2)｜4K HDR anime channel｜note https://note.com/animehdr/n/nb4c6b7a172d2
+Mac版の場合は10bit出力モードを選択し、HDRでソフト内プレビューが可能である。
+*Studio版のみの筈
+Winの場合はDeckLinkが必要であり、SDIかHDMIから出力することになる。
+注意としてはCineform、DNxHR、IMFやMXF、HEVC main10等の10bit以上に対応するフォーマットを選ぶことと、HDRメタデータの書き出しを有効にし、カラースペースのタグをプロジェクトの設定に揃えておくこと
+HDRという色空間とDolby Vision｜4K HDR anime channel｜note https://note.com/animehdr/n/n29ef24b7aa29
+HLGはARIB STD-B67/rec.2020を採用する放送用の規格で、HDR10のガンマ違いだと思えば良い
+ここでトーンマップとはなにか
+例えば600cd/m2しか出せないテレビで輝度を信号通りに出力してしまうと600cd/m2を超えた部分は全てクリップしてしまう。
+それではHDR映像の表示において不具合となってしまうので例えば400cd/m2は300cd/m2に、500cd/m2は350cd/m2に、といった調整を行う。
+st2084の場合50%で100cd/m2、75%で1000cd/m2程度の出力となる。しかし本機では500cd/m2が上限であるため、80% st2084を500cd/m2になるように調整してある。加えて見え方が好ましくなるように補正をしている。この操作がHDRにおける視聴用のキャリブレーション
+注目すべきは輝度が500cd/m2に達しクリップする位置である。規格と一致させると70%で完全に飽和し、出力がフラットになってしまう。先の例では80%で飽和していたことを思うと表示可能なレンジが狭くなることが分かる。
+視聴には不適切だが、映像制作においては正しい表示を前提に操作を行う必要があるためこの状態にする必要がある
+Dolby Visionはこのガンマが映像に応じて変わると理解すれば良い
+色空間｜4K HDR anime channel｜note https://note.com/animehdr/n/n97d8728017bd
+色空間とは画を作る際に使用する色と明るさの範囲を合わせた物を指す
+SDRで想定しているのは放送用規格(bt.709/bt.1886)であれば0.01～0.1-100cd/m2が標準
+HDRの場合、SMPTE ST2084ならば最大10000cd/m2、ARIB STD-B67ではおおよそ1000cd/m2となる。SMPTE ST2084では黒側は最低0.005cd/m2程度で良い、ともされている
+[臨時記事] iPhone12 HLG Dolby VisionのYoutube公開時の注意点[10/28更新]｜4K HDR anime channel｜note https://note.com/animehdr/n/n127e0aa1eda2
+現状ではiPhoneのHDRをアップロードすると以下のような動作になると思われる
+PC…PQ再生(恐らくbt.709 or 1886入力→st2084変換?、scRGB入力かもしれない)
+Youtubeアプリ等…PQ再生
+アプリの場合Dolby Visionのタグを参照してしまうためかHLGをst2084として再生し、異常に白飛びが激しい画となる
+HLG入力を指定し、st2084にガンマを変換し、st2084で出力するのが最善
+What is gamma correction?｜4K HDR anime channel｜note https://note.com/animehdr/n/n935aea13ac4c
+OETFは信号に対するガンマ補正といえる。上図における下側への補正がこれに相当する。
+EOTFは表示側のガンマ補正であり、上の図で言えば上側への補正である。
+歪みの強度がガンマ補正の強度であり、テレビ側のガンマ値を大きくすることはより下側への歪みを強くし、ガンマ補正値を小さくすることはその逆を意味する。
+なぜ今もガンマで歪まされた画を見ているのだろうか｜4K HDR anime channel｜note https://note.com/animehdr/n/n0fa9be24e8a2
+今もガンマ補正は残っている。
+それは人の視覚の特性が理由である。
+一般的に目の特性として
+・明るすぎるところよりも暗部～中間輝度に対して階調を感じやすい
+・見え方は「リニア」よりも「対数」に依存する。
+　つまり輝度が二倍になっても二倍明るく見えるわけではない。
+・好ましい明るさの範囲が存在する
+リニアであれば50cd/m2までの表示を0-128の階調で表現する必要がある。しかしガンマ補正を行うと0-50cd/m2の範囲に対しデータ上では200近い階調をもたせることが出来る。ガンマ補正を行うことでより低輝度～中間域を細かく描く事ができるのである。
+しかし、注意しておきたいのは、こうした補正により高輝度域の階調表現が大きく損なわれる
+
+XYZ色空間に迫る(1) - Qiita https://qiita.com/Ushio/items/203f16ad1e23fd42231c
+XYZ色空間に迫る(2) - Qiita https://qiita.com/Ushio/items/7a5d80612796c4bcfca6
+UHDTV HDR,HLG & WCGを理解する by LightIllusionに関する製品情報|Edipit http://www.edipit.co.jp/products/detail.php?id=128
+ST2084 HDRについて最も当惑するのは、それが映像全体の輝度を上げることを目的としているわけではなく（残念ながらHDRについてほとんどの人がそう考えていると思われる）、クロムめっき上の反射や太陽に照らされた雲、炎、爆発、電球のフィラメントなどのスペクトルハイライトの詳細を表示するために、輝度に余裕を持たせることを目的としていることである。
+ピーク輝度とビットレベル( 10ビット信号
+•10,000 nits = 1023
+•5,000 nits = 948
+•4,000 nits = 924
+•2,000 nits = 847
+•1,000 nits = 769
+•400 nits = 668
+•100 nits = 519
+HDR - 黒レベル
+HDR規格は”より暗い黒”を作り出すことはできない
+ガンマ補正のうんちく - Qiita https://qiita.com/yoya/items/122b93970c190068c752
+輝度の値を計算する際には、
+    ガンマ補正を外してグラフの明度(R,G,Bの値)と輝度を比例(リニア)の関係にする
+    やりたい輝度計算をする。(グレイスケールだとR,G,Bを混ぜる計算)
+    その後またガンマ補正をかけ直して元に戻す
+	@ffmpegでコマンド調べる
+ガンマ補正は浮動小数点の冪乗関数(pow)を用いるので計算負荷がそこそこ高いです。
+また、色深度が8ビット,256階調のまま sRGB からリニアに変換すると、低輝度の階調が潰れてしまいます。具体的にはsRGBの12以下がリニアでは0になります。16ビットか、せめて12ビット以上の色深度で処理する必要がでてきます。
+
+
+https://twitter.com/AnimeHdr/status/1343087077747912704	HDR
+https://www.youtube.com/watch?v=U1-6QCFnZmM&feature=youtu.be
+https://twitter.com/AnimeHdr/status/1344481657089212417
+https://twitter.com/AnimeHdr/status/1344106929124077568
+https://twitter.com/AnimeHdr/status/1343779493391945728
+https://twitter.com/AnimeHdr/status/1322493718247604224	HDRディスプレイキャリブレーションのワークフローを簡略化
+
+https://twitter.com/toru_ver15/status/1337365869668618242
+
+https://twitter.com/TANY_FMPMD/status/1345956829323378688
+SDRとHDRは所詮RGBの絶対値をどう考えるかにおける掛け算が違うってだけ
+ただ、実際の表示はEOTFとディスプレイの表示能力に依存する。
+
+https://zenn.dev/tan_y/articles/55f63a1d97495d
+Windows HDR (とキャプチャ問題について) の解説
+
+https://twitter.com/AnimeHdr/status/1345359787005861889
+感覚でやるんだと、例えば最終フォーマットが709ならきっちり709に校正したモニタをリファレンスに用意して、同時にテレビ(校正不要、画質自動とかダイナミックとかそういうの)での見え方も見ながら作るのがいいんじゃないですかね
+基本は709。ただ、実際に見られるのは後者が大半。
+
