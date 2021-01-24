@@ -131,3 +131,32 @@ https://twitter.com/AnimeHdr/status/1345359787005861889
 感覚でやるんだと、例えば最終フォーマットが709ならきっちり709に校正したモニタをリファレンスに用意して、同時にテレビ(校正不要、画質自動とかダイナミックとかそういうの)での見え方も見ながら作るのがいいんじゃないですかね
 基本は709。ただ、実際に見られるのは後者が大半。
 
+https://twitter.com/AnimeHdr/status/1347114025692237828
+HDRリファレンスレベルの高輝度に対応ってだけでHDRディスプレイの校正はうちで開発したフロー以外は3D LUTでかつHDR対応の業務機か、外部LUT入れるしかない
+
+https://twitter.com/AnimeHdr/status/1348093619756953603
+実際のカメラのレンジにおける考え方。
+これどれだけの人が説明できているのだろう。
+ちなみにログガンマは結果だけ見れば
+ニーを効かせまくってるSDRと大差ない。
+ただしログのほうが(ビット深度に制限があれば)より効率的で高品質にしやすい
+
+
+
+https://www.reddit.com/r/ffmpeg/comments/kr5hcy/encode_a_x2654k_hlg_file_and_convert_it_to/
+fmpeg -y -i source.mkv -vf "scale=-2:trunc(ih/(iw/1920)/2)*2" -map 0 -map -v -map V -c copy -c:a aac -c:v libx265 -preset medium -x265-params pic-struct=0:colorprim=bt2020:colormatrix=bt2020nc:transfer=bt2020-10:atc-sei=18:crf=19 -map_metadata -1 output.mkv
+HLG保持	265-265
+
+https://forum.doom9.org/showthread.php?t=181570
+
+
+https://github.com/quietvoid/hdr10plus_parser
+
+https://www.itu.int/pub/R-REP-BT.2446-2019
+Methods for conversion of high dynamic range content to standard dynamic range content and vice-versa
+	HDR-SDR相互変換
+
+https://twitter.com/AnimeHdr/status/1351540792511217665
+waveformフィルタでノイズ具合を調べる
+	https://nico-lab.net/display_waveform_with_ffmpeg/
+

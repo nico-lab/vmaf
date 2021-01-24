@@ -20,6 +20,17 @@ vmaf_float_v0.6.1.json
 vmaf_float_v0.6.1neg.json
 vmaf_v0.6.1neg.json
 
+@再確認
+"C:\Downloads\ffmpeg-N-100455-g5dbabb020e-win64-gpl\bin\ffmpeg" 
+vmaf_float_v0.6.1.json	が使えている。
+何が使えてなかったのか再確認する
+
+n_threads
+0	7.9fps
+無指定が一番早そう
+	学校PCでは無指定が一番早い
+問題はスレッドが多いPCではどうなるか
+
 https://github.com/Netflix/vmaf
 https://netflixtechblog.com/toward-a-practical-perceptual-video-quality-metric-653f208b9652
 https://netflixtechblog.com/high-quality-video-encoding-at-scale-d159db052746
@@ -33,3 +44,124 @@ http://www.itu.int/dms_pub/itu-r/opb/rep/R-REP-BT.2246-2-2012-PDF-E.pdf
 https://forum.doom9.org/showthread.php?p=1932106#post1932106
 	https://www.avsforum.com/threads/2020-lg-oled-cx-gx-owners-thread-faq-posts-1-6-no-price-talk.3119288/page-854#post-60360409
 	https://www.avsforum.com/threads/36-bit-mgvc-blu-ray-only-in-japan.1486405/
+
+#R
+setwd("C:/Users/R/Desktop/video/tmp2/crf35bv0") #書き換える
+x <- read.csv("cpu-used-4.csv", header=T) #書き換える、書き込みしやすいようにファイル名を見直す
+#paste('cpu-used',pass1,pass2,'p.csv',sep = "-") #"cpu-used-2-5-p.csv"
+pass1 <- 4
+pass2 <- 2
+vmaf <- (x$vmaf)
+summary(vmaf)
+mean <- mean(vmaf)
+min <- min(vmaf)
+sd <- sd(vmaf) #不偏標準偏差, pasteでエラーになる
+mid <- median(vmaf)
+q25 <- quantile(vmaf,0.25, names=0)
+pname <- paste(pass2,'vp9.png',sep = "-")
+png(pname, width = 300, height = 300)
+#@グラフに表題を追加する
+hist(vmaf)
+dev.off()  
+hist(vmaf) # 100が最大数になる。品質上限が高すぎる？分割数は用検証
+#minを底上げすること。100が多すぎないこと
+#95未満をいかに減らすか
+#pass2のCPU3以降で明らかに下限が下がる
+kakikomi <-paste(mean, min, sd, mid, q25, sep = "\t")
+fname <- paste(pass1,pass2,'vp9.txt',sep = "-")
+write.table(kakikomi, fname, quote=F, row.names=FALSE, sep="\t", fileEncoding="Shift-JIS")
+#これらのコマンドを複数ファイルで扱えるように行列に入れてテーブルにしてから出力する
+#縦にベクターを並べて横につなげる
+
+#loopを考える, pass2を変更する
+setwd("C:/Users/R/Desktop/video/tmp2/2160z") #書き換える
+for (i in 0:3){
+	cname <- paste('cpu-used-4-2', i, '.csv', sep = "-") #"cpu-used-2-5-p.csv"
+	x <- read.csv(cname, header=T) 
+	pass1 <- 4
+	pass2 <- i
+	vmaf <- (x$vmaf)
+	summary(vmaf)
+	mean <- mean(vmaf)
+	min <- min(vmaf)
+	sd <- sd(vmaf)
+	mid <- median(vmaf)
+	q25 <- quantile(vmaf,0.25, names=0)
+	pname <- paste(pass2,'vp9.png',sep = "-")
+	png(pname, width = 300, height = 300)
+	#@グラフに表題を追加する
+	hist(vmaf)
+	dev.off()  
+	#minを底上げすること。100が多すぎないこと
+	#95未満をいかに減らすか
+	#pass2のCPU3以降で明らかに下限が下がる
+	kakikomi <-paste(i, mean, min, sd, mid, q25, sep = "\t")
+	fname <- paste(pass1,'vp9.txt',sep = "-")
+	write.table(kakikomi, fname, quote=F, row.names=FALSE, col.names=F, sep="\t", fileEncoding="Shift-JIS", append=T) #appendで追記
+}
+
+summary(vmaf)
+
+#motion2とvmafの関係を調べる
+他の設定でスコアの変化が大きいのはどのシーンなのかを調べる方法
+ビットレートとの関係を調べるには1秒平均のvmafと1秒平均のビットレートを揃えないと比較できない
+1秒間のフレーム数でvmafを平均した折れ線グラフを作る
+apply関数で一定間隔の行に変換。割り切れない場合は切り落とすか水増しするか
+	後ろをカットするのが楽かも
+	apply()	http://cse.naro.affrc.go.jp/takezawa/r-tips/r/24.html
+	割り切れる行列にする方法
+#plot	http://scratchhit.pazru.com/%E4%BD%9C%E5%9B%B3/r%E3%81%A7%E4%BD%9C%E5%9B%B3-%20%E5%A4%A7%E3%81%8D%E3%81%95%E3%81%A8%E3%81%8B%E5%BE%AE%E8%AA%BF%E6%95%B4%E3%81%AE%E8%A6%9A%E6%9B%B8
+	http://cse.naro.affrc.go.jp/takezawa/r-tips/r/48.html
+
+#グラフにするなら1秒ごとに平均した方が見やすいが1秒でも折れ線は見にくい
+setwd("C:/Users/R/Desktop/video/cpu-use-2pass/crf34") #書き換える
+x <- read.csv("cpu-used-4-2-p.csv", header=T) #書き換える、書き込みしやすいようにファイル名を見直す
+pass1 <- 2
+fps <- 24
+#length(x$vmaf)/fps
+num <- floor(length(x$vmaf)/fps)*fps
+y <- x$vmaf
+y1 <- y[1:num]
+y2 <- matrix(y[1:num], nrow=fps)
+y3 <- apply(y2, 2, mean) 
+fname <- paste('vmaf-mean', pass1,'vp9.txt',sep = "-")
+write.table(y3, fname, quote=F, row.names=FALSE, col.names=F, sep="\t", fileEncoding="Shift-JIS", append=T) #appendで追記
+z <- x$motion2
+z1 <- y[1:num]
+z2 <- matrix(z[1:num], nrow=fps)
+z3 <- apply(z2, 2, mean) 
+fname <- paste('motion2-mean', pass1,'vp9.txt',sep = "-")
+write.table(z3, fname, quote=F, row.names=FALSE, col.names=F, sep="\t", fileEncoding="Shift-JIS")
+
+
+win.graph(14, 7) # 幅, 高さの順で指定。単位はインチ
+#plot(y3)
+plot(y3, main="秒時間とvmafの値",  xlab="秒", ylab="vmaf", type="l")
+plot(z3, main="秒時間とmotion2の値",  xlab="秒", ylab="motion2", type="l")
+
+
+# vmafの外れ値を抽出したい。何番目の値かを調べる
+
+
+length(y2)
+length(y3)
+
+head(y2)
+head(y3)
+95.24075 98.98868 94.94505 95.35413 95.86731 95.77856
+
+y2 <- matrix(y[1:48], ncol=fps)
+y3 <- apply(y2, 1, mean) 
+
+
+z1 <- y[1:24]
+mean(z1)
+95.24075
+z1 <- y[25:48]
+
+
+#下位数%をどうするか
+quantile(vmaf,0.15, names=0)
+quantile(vmaf,0.10, names=0)
+quantile(vmaf,0.05, names=0)
+quantile(vmaf,0.02, names=0)

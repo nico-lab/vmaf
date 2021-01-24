@@ -48,10 +48,10 @@ Thanks for testing. I retried with full path.
 
 Without float models are ok.
 ffmpeg.exe -f lavfi -i color=d=1:s=1920x1080 -f lavfi -i color=d=1:s=1920x1080 -lavfi "[0:v]setpts=PTS-STARTPTS[reference];[1:v]setpts=PTS-STARTPTS[distorted];[distorted][reference]libvmaf=log_fmt=csv:model_path='F\:/vmaf/vmaf_v0.6.1.json':log_path='F\:/vmaf/test.csv" -f null -
-ffmpeg.exe -f lavfi -i color=d=1:s=1920x1080 -f lavfi -i color=d=1:s=1920x1080 -lavfi "[0:v]setpts=PTS-STARTPTS[reference];[1:v]setpts=PTS-STARTPTS[distorted];[distorted][reference]libvmaf=log_fmt=csv:model_path='F\:/vmaf/vmaf_v0.6.1neg.json':log_path='F\:/vmaf/test_flat.csv" -f null -
+ffmpeg.exe -f lavfi -i color=d=1:s=1920x1080 -f lavfi -i color=d=1:s=1920x1080 -lavfi "[0:v]setpts=PTS-STARTPTS[reference];[1:v]setpts=PTS-STARTPTS[distorted];[distorted][reference]libvmaf=log_fmt=csv:model_path='F\:/vmaf/vmaf_v0.6.1neg.json':log_path='F\:/vmaf/test_float.csv" -f null -
 
 But with float models encountered an error.
-ffmpeg.exe -f lavfi -i color=d=1:s=1920x1080 -f lavfi -i color=d=1:s=1920x1080 -lavfi "[0:v]setpts=PTS-STARTPTS[reference];[1:v]setpts=PTS-STARTPTS[distorted];[distorted][reference]libvmaf=log_fmt=csv:model_path='F\:/vmaf/vmaf_float_v0.6.1.json':log_path='F\:/vmaf/test_flat.csv" -f null - 
+ffmpeg.exe -f lavfi -i color=d=1:s=1920x1080 -f lavfi -i color=d=1:s=1920x1080 -lavfi "[0:v]setpts=PTS-STARTPTS[reference];[1:v]setpts=PTS-STARTPTS[distorted];[distorted][reference]libvmaf=log_fmt=csv:model_path='F\:/vmaf/vmaf_float_v0.6.1.json':log_path='F\:/vmaf/test_float.csv" -f null - 
 
 ffmpeg version 2021-01-01-git-63505fc60a-full_build-www.gyan.dev Copyright (c) 2000-2021 the FFmpeg developers
   built with gcc 10.2.0 (Rev5, Built by MSYS2 project)
@@ -111,4 +111,16 @@ vmaf_rb_v0.6.2
 vmaf_rb_v0.6.3
 vmaf_v0.6.1.json
 vmaf_v0.6.1neg.json
+
+https://github.com/Netflix/vmaf/blob/master/resource/doc/ffmpeg.md#note-about-the-model-path-on-windows
+https://github.com/BassThatHertz/video-quality-metrics/issues/29
+libvmaf v2.0.0からjsonを読み込むのに変更
+https://github.com/BassThatHertz/video-quality-metrics/commit/387e88f422e1d6d3aa62f516b9eadc04360cd751
+https://github.com/Netflix/vmaf/issues/778
+When using the old model file (vmaf_v0.6.1.pkl) with that build of FFmpeg, it works fine. With the latest build of FFmpeg, neither model file works.
+2.0.0のjsonは読み込めるがfloatに対応してない
+https://github.com/Netflix/vmaf/issues/753
+ffmpegはサポートしてない
+That being said, I will be working on an updated filter this week to take advantage of v2.0.0 which I will be sending to ffmpeg-devel. When that is in-progress/done, I will provide updates via this issue.
+https://patchwork.ffmpeg.org/project/ffmpeg/list/?series=&submitter=&state=&q=vmaf&archive=&delegate=
 

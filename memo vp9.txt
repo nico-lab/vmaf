@@ -1,3 +1,116 @@
+https://nico-lab.net/setting_libvpx-vp9_with_ffmpeg/
+#pass2とレートコントロール	仮説
+2パス目にはレートコントロールの設定が効かない？
+	レートコントロールしたログパスを使うとそのコントロールで2パス目に調整する？
+シングルパスだけにレートコントロールの設定が効く？
+
+1pass、2passどちらもminrate単体では変化がない
+-crf 28 -minrate 2000k -b:v 0 
+
+1pass、2passどちらもqmax単体では変化はわずか
+-crf 28 -qmax 30 -b:v 0 
+	1passの40,50に変化無く30だけ変化がある
+	2passでは55以下からかすかに変化がある
+
+#vp9 abr matrix
+2pass指定で-b:vだけだと1passのログファイルはcpu-usedにどれを使っても変化がない
+	他のオプションだと変化があるのかどうか
+		@最初は同じでも最後が違うこともあるので再確認
+		logファイルを再確認する
+-c:v libvpx-vp9 
+-crf N -b:v 6000k
+-crf N -b:v 1800k  -minrate 900k -maxrate 2610k
+-cpu-used N -b:v 6000k
+
+#diffで再確認
+-crf 20  -b:v 6000k -qmin 3 -qmax 40
+
+ffmpeg -report -i "C:\\Downloads\\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an -pass 1 -c:v libvpx-vp9 -crf 40 -b:v 1800k -minrate 900k -maxrate 2610k -cpu-used 4 -tile-columns 2 -threads 3 -passlogfile crf40 -f null -
+ffmpeg -report -i "C:\\Downloads\\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an -t 60 -pass 1 -c:v libvpx-vp9 -crf 20 -b:v 6000k -qmin 3 -qmax 40 -cpu-used 3 -tile-columns 2 -threads 3 -passlogfile cpuc3 -f null -
+	これは同じではない。最初は同じで後ろが違う
+	diffコマンドで調べた方がよさそう
+		diff ファイル1 ファイル2
+			一致すれば何も起こらない
+diff aaa bbb
+
+上限下限のビットレート制限でcrf変化はvmafにどのような影響があるか
+	途中まで上がり途中から下がる
+	@他の素材を試す
+	@品質上げるのと前後2つを調べる
+		下限をビットレートで指定すると本当に不要な部分に余分にビットレートを与えそうなので品質の方がよい？
+			@BBBの200秒まででオプション変えながら調べる
+CheckBitrate -i 1 input
+
+
+
+1passのlogfileをcrfの軽いのにしても2パス目のcrfを優先する
+	1passのlogfileのcrfは大きな値を使うのがよい？
+		crfで速度変化なし。同じファイルを流用する
+	@処理速度の変化を調べる
+		ほとんど同じ速度
+	同じログファイルになる
+crf52
+	ffmpeg started on 2021-01-18 at 15:51:18
+	?2021?年?1?月?18?日、??16:02:34
+	10:16
+crf28
+	ffmpeg started on 2021-01-17 at 12:07:31
+	?2021?年?1?月?17?日、??12:18:49
+	10:18
+
+@これをもう少し調べる
+1passログファイルが変わるのはどの設定か
+	解像度
+
+1passログファイルが変わらないのはどの設定か
+	crf, qmin, qmax, bv, cpu-used, tile-columns, deadline, 
+		-deadline realtime	はログファイルを出力しない
+
+またそのビットレートでvmafがどれくらいになるか
+	crfとvmafの関係を調べる
+crf単体でどれだけビットレートが上がるか
+	-crf 28 -b:v 0
+	1区切りで上げる
+リサイズしてもモデルは使えるか、解像度が異なるとログも違う、解像度が異なってもエラーにならない
+	基礎データのオプション選定
+		-crf 32  -b:v 0 でvmafが一番高いcrfを使う
+		-passlogfile crf35bv0	形式を使う
+	1280x720	960x540
+	640x360
+	それぞれの解像度を調べる
+		1920x1080のパスログを使う
+		1280x720のパスログを使う
+		960x540のパスログを使う
+		640x360のパスログを使う
+
+
+#運用
+基本オプションの決定
+必要ビットレートを調べてからcrfと上下のビットレートの値を決める
+	qmin, qmaxだと調整しにくいかもしれない
+レートコントロールの決定
+
+# SD解像度	row-mt
+ffmpeg -i 10.mp4 -t 20 -an   -c:v libvpx-vp9 -crf 30 -qmin 3 -qmax 40 -b:v 0 -f null -
+30fps 33%	2スレッドしか動いてない
+ffmpeg -i 10.mp4 -t 20 -an   -c:v libvpx-vp9 -crf 30 -qmin 3 -qmax 40 -b:v 0 -threads 3  -f null -
+30fps 33%	2スレッドしか動いてない
+ffmpeg -i 10.mp4 -t 20 -an   -c:v libvpx-vp9 -crf 30 -qmin 3 -qmax 40 -b:v 0 -threads 3 -row-mt 1 -f null -
+41fps	44%	4スレッド動いている
+ffmpeg -i 10.mp4 -t 20 -an   -c:v libvpx-vp9 -crf 30 -qmin 3 -qmax 40 -b:v 0 -threads 3 -row-mt 1 -tile-columns 1 -f null -
+41fps	44%	4スレッド動いている
+
+# FHD 無指定の方がCPUをよく使っている	row-mt
+ffmpeg -i hina-11.mp4 -t 10 -an   -c:v libvpx-vp9 -crf 30 -qmin 3 -qmax 40 -b:v 0 -f null -
+16fps	6スレッド動いている
+ffmpeg -i hina-11.mp4 -t 10 -an   -c:v libvpx-vp9 -crf 30 -qmin 3 -qmax 40 -b:v 0 -threads 3  -f null -
+12fps	4スレッド動いている
+ffmpeg -i hina-11.mp4 -t 10 -an   -c:v libvpx-vp9 -crf 30 -qmin 3 -qmax 40 -b:v 0 -threads 3 -row-mt 1 -f null -
+14fps	4スレッド動いている
+ffmpeg -i hina-11.mp4 -t 10 -an   -c:v libvpx-vp9 -crf 30 -qmin 3 -qmax 40 -b:v 0 -threads 3 -row-mt 1 -tile-columns 2 -f null -
+14fps	4スレッド動いている
+
+
 undershoot-pct
     Set datarate undershoot (min) percentage of the target bitrate.
     25
