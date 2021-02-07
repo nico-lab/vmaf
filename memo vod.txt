@@ -1,3 +1,8 @@
+CheckBitrate_l
+	GOP間隔以内ではデータが取れない
+全フレームのフレームサイズを取るにはすべてデコード必須
+	NVDEC使える？
+
 https://streaminglearningcenter.com/wp-content/uploads/2018/05/Encoding-for-HEVC-SME-2018-Jan.pdf
 p44
 VOD

@@ -19,6 +19,7 @@ vp9の -undershoot-pct 0 -overshoot-pct 0 を除外する
 	https://bitmovin.com/docs/encoding/tutorials/vp9-presets	より
 	除外したオプションはいくつかの動画で試行してvmafとビットレートのログを添付する
 
+
 ok
 h264のVOD設定のbitットレートを調べる
 https://www.videohelp.com/software/Bitrate-Viewer-2

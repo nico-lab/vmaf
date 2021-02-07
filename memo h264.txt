@@ -22,13 +22,24 @@ ffmpeg -i bbb200.mkv -c:v libx264 -b:v 1800k -minrate 900k -maxrate 2610k -prese
 ffmpeg -i bbb200.mkv -c:v libx264 -b:v 1800k -minrate 1200k -maxrate 2610k -preset ultrafast -pass 1 -passlogfile mi12 -an -f null -
 ffmpeg -i bbb200.mkv -c:v libx264 -b:v 1800k -minrate 900k -maxrate 2810k -preset ultrafast -pass 1 -passlogfile mz28 -an -f null -
 ffmpeg -i bbb200.mkv -c:v libx264 -b:v 2800k -minrate 900k -maxrate 2610k -preset ultrafast -pass 2 -passlogfile bv28 -an foo.mp4
-
 ffmpeg -i bbb200.mkv -c:v libx264 -b:v 2800k -minrate 900k -maxrate 2610k -bufsize 5000k -preset ultrafast -pass 1 -passlogfile bv28buf -an -f null -
 max bitrate less than average bitrate, assuming CBR
 ffmpeg -i bbb200.mkv -c:v libx264 -b:v 2000k -minrate 900k -maxrate 2610k -bufsize 5000k -preset ultrafast -pass 1 -passlogfile bv28buf -an -f null -
 これでエラーがなくなる
 ffmpeg -i bbb200.mkv -c:v libx264 -b:v 2000k -minrate 900k -maxrate 2610k -bufsize 4000k -preset ultrafast -pass 1 -passlogfile bv28buf4 -an -f null -
-
+
+フレーム別サイズを調べる	F:\top\avisynth_nico\ffmpeg build\showinfo_失敗
+ffprobe -level -8 -select_streams v -show_frames -show_entries frame=pict_type -show_entries packet=size -of json 10s.mp4 > foo.json
+	どの方法でパースして整形するか
+
+エンコログ（テキスト形式なのでgrepなどして対象行だけ拾ってから内容を削る
+	ファイル入力ならDDバッチをかく
+grep frame=14315 ffmpeg-20201227-113620.log > tt.txt
+grep "frame I:" ffmpeg-20201227-113620.log >> tt.txt
+grep "i8c dc,h,v,p:" ffmpeg-20201227-113620.log >> tt.txt
+grep "ref B L1:" ffmpeg-20201227-113620.log >> tt.txt
+
+
 
 目標ビットレート
 https://www.dacast.com/blog/best-h-264-encoder-settings-for-live-streaming/

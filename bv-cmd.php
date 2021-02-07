@@ -23,29 +23,30 @@ $in_file[] = array("fname" => "udh_video0222_15kbps_2pass_sameBitrateMaxrate_qmi
 // ファイル名とパスログを書き込むのを省力化したい
 // https://docs.google.com/spreadsheets/d/1zcTHgCedCDec83QYmCMhMc-AdT3fCi3NhJswBBe5VIE/edit#gid=0
 
-$ch_opt_name = " -aq-mode ";
-$ch_opt_name_ = "aq_mode"; // 出力ファイル名
+// $ch_opt_name = " -b:v ";
+$ch_opt_name_ = "bv"; // 出力ファイル名
 // value0
 $ch_opt = array(
-    0,
-    1,
-    2,
-    3,
+    1800,
+    1900,
+    2000,
+    2100,
 );
 //echo "mkdir ".$ch_opt_name_."\n";
 fwrite($fpe, "mkdir ".$ch_opt_name_."\n");
+
+
 
 /* bitrate考察
 https://docs.google.com/spreadsheets/d/1tczTBu3IAIizFiGEtVW7Sy7uZnMqHpm2-TrzRchxO6k/edit#gid=1575227514 BPP
 https://docs.google.com/spreadsheets/d/15ddn9hd9nz5HYboAkYW2zCv6665Bt9NmdOFwTyeGdDw/edit#gid=0 公式bv上昇
 */
-$bitrate = 1800;
+// $bitrate = 1800;
 $bminratio = 0.5;
 $bmaxratio = 1.45;
 $bv = "-b:v ";
 $bmi = "k -minrate ";
 $bma = "k -maxrate ";
-$bitrate_opt = $bv.$bitrate.$bmi.$bitrate*$bminratio.$bma.$bitrate*$bmaxratio."k -passlogfile ";
 // ビットレート変更対応
 
 $ff_path = "ffmpeg";
@@ -58,14 +59,15 @@ foreach ($ch_opt as $value0){
         $out_name_mp4 = $out_name.".mp4";
         $vmaf_opt = " -filter_complex \"[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]scale2ref=flags=bicubic,libvmaf=vmaf_4k_v0.6.1.pkl:log_fmt=csv:log_path=".$ch_opt_name_."\\".$ch_opt_name_.$value0."_".$value1['logname'].".csv\" -an -f null -";
         // モデルの変更有
-        $enc_cmd = $ff_path.$def_pre_opt.$in_path.$value1['fname'].$def_opt.$bitrate_opt.$value1['logname'].$ch_opt_name.$value0.$out_name_mp4."\n";
-    
+        $bitrate_opt = $bv.$value0.$bmi.$value0*$bminratio.$bma.$value0*$bmaxratio."k -passlogfile ";
+        $enc_cmd = $ff_path.$def_pre_opt.$in_path.$value1['fname'].$def_opt.$bitrate_opt.$value1['logname'].$out_name_mp4."\n";
+        //.$value1['logname'].$ch_opt_name.$value0.$out_name_mp4."\n";
+        echo $enc_cmd;
         fwrite($fpe, $enc_cmd);
         //echo $out_name_mp4."\n";
         //echo $vmaf_opt."\n";
         $vmaf_cmd = $ff_path.$def_pre_opt.$out_name_mp4." -i ".$in_path.$value1['fname'].$vmaf_opt."\n";
         fwrite($fpv, $vmaf_cmd);
-
     }
 }
 
