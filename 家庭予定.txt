@@ -1,0 +1,64 @@
+#2021/02/07
+PHPで入力ファイルとオプションコマンドの出力コードを書く
+	ひとまず完成
+	// TODO
+	// vmaf出力コマンドを作る
+	// Rコピペ用を作る
+	// 1passログ出力
+	// h264設定
+Rでvmaf, vmafのグラフを同時に表示し統計データと同時に出力する
+各コーデック毎にcrfとbv毎のvmafのグラフがほしい
+職場PCの確認
+aqでvmafがhhbとどのように変化があるか
+	ビットレートも調べる
+		@パスを通す
+		ok
+	vmaf,bitrateのcsvをひろう
+	bitmovin.では1がいいらしい
+vp9の -undershoot-pct 0 -overshoot-pct 0 を除外する
+	https://bitmovin.com/docs/encoding/tutorials/vp9-presets	より
+	除外したオプションはいくつかの動画で試行してvmafとビットレートのログを添付する
+
+ok
+h264のVOD設定のbitットレートを調べる
+https://www.videohelp.com/software/Bitrate-Viewer-2
+	業務に入れる
+
+
+
+#2021/02/06
+@セグメントパスログが対応しているかどうか
+	異なるパスログになるから出力も異なる（良いのか悪いのか
+		該当ファイルのパスログが一番高画質
+-aq-mode のレートコントロール（職場
+	0123の4通りを試す
+	-crf 31 -b:v 0
+		おおまかなビットレート波形を調べる
+レートコントロール
+	-crf N -b:v 1800k  -minrate 900k -maxrate 2610k
+	-b:v 1800k  -minrate 900k -maxrate 2610k
+vmafのffmpegをできるだけ最新にする（ffmpeg-N-100455
+	モデルは最新版が使えるか確認
+公式設定からbvを上げてminrate,-maxrateも平行してあげてhhbの容量に近いビットレートを探す
+職場で走らせているのは異なる映像でもcrfの品質向上が同じようにビットレートが増えるか確認
+	hhb	vmaf	ima
+	aq-mode	ima
+		1ファイルだけaqごとにvmafをとる
+		ビットレートが高いところはhhbよりもやや大きく、低いところはかなり低くなるのでminrate,-maxrateをどう上げるか
+			両方上げてもよくて、maxrate大きめを試す
+				最初はmaxrateだけを上げる
+	ビットレート制限する	tugi
+vmafの上下が必ずしもminrate,-maxrateの上限下限に一致しない（crfで調整できる？
+	crfを高品質にすべきか、bvと付随してビットレートを上げるべきか
+ビットレート固定してcrf変えるとビットレートはどのように変化するか調べる
+	crfが高品質になるとサイズも大きくなる
+	crfが低品質になるとそれ以上にサイズが一定期間小さくならないが、とあるところからサイズが減る
+	## vmaf	vp9 crf official
+		それぞれのaqを使ってhhbのサイズに近づけたbvを探す（crf31固定
+		推奨値とhhbのサイズを比較して近くなるようにbvと付随するmin, maxを上げる
+		サイズが近くなったらcrfの品質だけを下げてvmafを計算する
+			おそらくcrfを下げてもサイズが変わらない区間がある？
+			最初から下がるのなら上げる
+			変わらない区間がないこともある？
+		vmafが高くなったところでcrfを止める
+

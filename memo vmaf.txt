@@ -74,14 +74,16 @@ write.table(kakikomi, fname, quote=F, row.names=FALSE, sep="\t", fileEncoding="S
 #縦にベクターを並べて横につなげる
 
 #loopを考える, pass2を変更する
-setwd("C:/Users/R/Desktop/video/tmp2/2160z") #書き換える
-for (i in 0:3){
-	cname <- paste('cpu-used-4-2', i, '.csv', sep = "-") #"cpu-used-2-5-p.csv"
+	#ヒストグラムを75から5区切りに変更する
+setwd("C:/Users/R/Desktop/video/vp9 crf official") #書き換える
+for (i in 0:4){
+	cname <- paste('official', i, '.csv', sep = "-") #"cpu-used-2-5-p.csv"
 	x <- read.csv(cname, header=T) 
 	pass1 <- 4
 	pass2 <- i
 	vmaf <- (x$vmaf)
-	summary(vmaf)
+	alength <- length(x$vmaf)
+	#summary(vmaf)
 	mean <- mean(vmaf)
 	min <- min(vmaf)
 	sd <- sd(vmaf)
@@ -90,7 +92,12 @@ for (i in 0:3){
 	pname <- paste(pass2,'vp9.png',sep = "-")
 	png(pname, width = 300, height = 300)
 	#@グラフに表題を追加する
-	hist(vmaf)
+	vmaf <- subset(x$vmaf, x$vmaf > 70)
+	mlength <- length(vmaf)
+	ratio <- sprintf("%1.4f", mlength/alength)
+	hist(vmaf, breaks = seq(70, 100, 1), main = paste("vmaf 70 over : ", ratio)) #70未満はグラフ除外
+	#legend("topleft", legend=c("mean:", "min:", "sd:", "mid", "25%"), pch=16)
+	legend("topleft", title="mean min sd medi 25%", legend=c(sprintf("%1.4f", mean), min, sprintf("%1.4f", sd), mid, q25), pch=16)
 	dev.off()  
 	#minを底上げすること。100が多すぎないこと
 	#95未満をいかに減らすか
@@ -100,7 +107,18 @@ for (i in 0:3){
 	write.table(kakikomi, fname, quote=F, row.names=FALSE, col.names=F, sep="\t", fileEncoding="Shift-JIS", append=T) #appendで追記
 }
 
+
+
+
 summary(vmaf)
+
+#php xml
+xml csv
+harmonic_mean
+	を追加する
+pooled_metrics	に結果が表示される
+https://www.convertcsv.com/xml-to-csv.htm
+
 
 #motion2とvmafの関係を調べる
 他の設定でスコアの変化が大きいのはどのシーンなのかを調べる方法
@@ -113,25 +131,40 @@ apply関数で一定間隔の行に変換。割り切れない場合は切り落
 #plot	http://scratchhit.pazru.com/%E4%BD%9C%E5%9B%B3/r%E3%81%A7%E4%BD%9C%E5%9B%B3-%20%E5%A4%A7%E3%81%8D%E3%81%95%E3%81%A8%E3%81%8B%E5%BE%AE%E8%AA%BF%E6%95%B4%E3%81%AE%E8%A6%9A%E6%9B%B8
 	http://cse.naro.affrc.go.jp/takezawa/r-tips/r/48.html
 
-#グラフにするなら1秒ごとに平均した方が見やすいが1秒でも折れ線は見にくい
-setwd("C:/Users/R/Desktop/video/cpu-use-2pass/crf34") #書き換える
-x <- read.csv("cpu-used-4-2-p.csv", header=T) #書き換える、書き込みしやすいようにファイル名を見直す
-pass1 <- 2
-fps <- 24
-#length(x$vmaf)/fps
-num <- floor(length(x$vmaf)/fps)*fps
-y <- x$vmaf
-y1 <- y[1:num]
-y2 <- matrix(y[1:num], nrow=fps)
-y3 <- apply(y2, 2, mean) 
-fname <- paste('vmaf-mean', pass1,'vp9.txt',sep = "-")
-write.table(y3, fname, quote=F, row.names=FALSE, col.names=F, sep="\t", fileEncoding="Shift-JIS", append=T) #appendで追記
-z <- x$motion2
-z1 <- y[1:num]
-z2 <- matrix(z[1:num], nrow=fps)
-z3 <- apply(z2, 2, mean) 
-fname <- paste('motion2-mean', pass1,'vp9.txt',sep = "-")
-write.table(z3, fname, quote=F, row.names=FALSE, col.names=F, sep="\t", fileEncoding="Shift-JIS")
+#vmaf、vmafmのNフレーム平均
+##グラフにするなら1秒ごとに平均した方が見やすいが1秒でも折れ線は見にくい
+##同じグラフに線の色を変えて描写した方が見やすく、同じような線を描く
+setwd("C:/Users/R/Desktop/video/vp9 crf official") #書き換える
+for (i in 0:0){
+	cname <- paste('03', i, '.csv', sep = "-") #"official-0-.csv"
+	x <- read.csv(cname, header=T)
+	name <- "official"
+	fps <- 24
+	#length(x$vmaf)/fps
+	num <- floor(length(x$vmaf)/fps)*fps
+	y <- x$vmaf
+	y1 <- y[1:num]
+	y2 <- matrix(y[1:num], nrow=fps)
+	vmaf <- apply(y2, 2, mean) # vmaf
+	pname <- paste(name,"vmaf",  i, '.png', sep = "-")
+	png(pname, width = 300, height = 300)
+	plot(vmaf, type="l")
+	dev.off() 
+	#fname <- paste('vmaf-mean', pass1,'vp9.txt',sep = "-")
+	#write.table(y3, fname, quote=F, row.names=FALSE, col.names=F, sep="\t", fileEncoding="Shift-JIS", append=T) #appendで追記
+	z <- x$motion2
+	z1 <- y[1:num]
+	z2 <- matrix(z[1:num], nrow=fps)
+	vmafm <- apply(z2, 2, mean) # vmafm
+	#fname <- paste('motion2-mean', i,'vp9.txt',sep = "-")
+	#write.table(z3, fname, quote=F, row.names=FALSE, col.names=F, sep="\t", fileEncoding="Shift-JIS")
+	pname <- paste(name,"vmafm",  i, '.png', sep = "-")
+	png(pname, width = 300, height = 300)
+	plot(vmafm, type="l")
+	dev.off() 
+}
+
+
 
 
 win.graph(14, 7) # 幅, 高さの順で指定。単位はインチ

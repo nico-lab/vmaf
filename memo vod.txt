@@ -1,0 +1,15 @@
+https://streaminglearningcenter.com/wp-content/uploads/2018/05/Encoding-for-HEVC-SME-2018-Jan.pdf
+p44
+VOD
+Average segment bit rate MUST be within 10% of the AVERAGE-BANDWIDTH attribute
+•Measured peak bit rate MUST be within 10% of the BANDWIDTH attribute.
+•Peak bit rate SHOULD be no more than 200% of the average bit rate.
+AVERAGE-BANDWIDTHとBANDWIDTHは値が異なる
+	AVERAGE-BANDWIDTH < BANDWIDTH
+1セグメントの容量が上下1割以内に収まるように？
+	単純にVBRにすると下限が低すぎるので上げるべきか？
+ピークビットレートは平均の2倍以内
+他のVODのビットレート波形を調べる
+	abema, gyaoを見てもそれなりに上下動はある
+
+

@@ -1,0 +1,24 @@
+https://bitmovin.com/docs/encoding/tutorials/h265-presets
+
+https://streaminglearningcenter.com/wp-content/uploads/2018/05/Encoding-for-HEVC-SME-2018-Jan.pdf
+preset別のvmaf
+
+https://streaminglearningcenter.com/wp-content/uploads/2018/05/Encoding-for-HEVC-SME-2018-Jan.pdf
+P51
+640 x 360	145
+768 x 432	300
+960 x 540	600
+960 x 540	900
+960 x 540	1600
+1280 x 720	2400
+1280 x 720	3400
+1920 x 1080	4500
+1920 x 1080	5800
+2560 x 1440	8100
+3840 x 2160	11600
+3840 x 2160	16800
+
+P60
+ffmpeg -y  -i TOS_1080p.mov -c:v libx265 -preset slow -x265-params profile=main:keyint=48:min-keyint=48:scenecut=0:ref=5:bframes=3:b-adapt=2:bitrate=4000:vbv-maxrate=4400:vbv-bufsize=4000 -an -pass 1 -f mp4 NUL && 
+ffmpeg -i TOS_1080p.mov -c:v libx265 -preset slow  -x265-params profile=main:keyint=48:min-keyint=48:scenecut=0:ref=5:bframes=3:b-adapt=2:bitrate=4000:vbv-maxrate=4400:vbv-bufsize=4000 -an -pass 2 TOS_1080p_h.mp4
+ffmpeg -i TOS_1080p.mov -c:v libx265 -s 1280x720 -preset slow  -x265-params profile=main:keyint=48: min-keyint=48:scenecut=0:ref=5:bframes=3:b-adapt=2:bitrate=1000:vbv-maxrate=1100:vbv-bufsize=1000 -an -pass 2 TOS_720p_l.mp4

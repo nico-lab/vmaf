@@ -1,3 +1,76 @@
+# passlog
+https://superuser.com/questions/1549360/second-pass-while-using-concat-in-ffmpeg
+libx264は1パス目は品質指定ができて2パス目はビットレート指定になる。libx265、vp8、libvpx-vp9はどちらも品質指定ができる。
+VBV maxrate specified, but no bufsize, ignored
+log.mbtreeが作られる作られないの違いが分からない
+	mbtreeが設定で有効になってないと作られない
+	mbtree同じファイルなら内容は同じ
+	パスログファイルは設定が異なるとファイルも異なる
+		レート関係はどうなるか
+			レート関係も影響する
+			bufsizeかえると異なる
+		設定毎に異なるので毎回パスログを作るべき
+			max. min は設定が効いてないので同じ
+パスログが他の設定に流用できるのかできないのかを調べる
+ffmpeg -i bbb200.mkv -c:v libx264 -b:v 1800k -minrate 900k -maxrate 2610k -preset ultrafast -pass 1 -passlogfile ultrafast -an -f null -
+ffmpeg -i bbb200.mkv -c:v libx264 -b:v 1800k -minrate 900k -maxrate 2610k -preset veryslow -pass 1 -passlogfile veryslow -an -f null -
+	veryslow-0.log.mbtree
+ffmpeg -i bbb200.mkv -c:v libx264 -crf 20 -preset ultrafast -pass 1 -passlogfile crf20 -an -f null -
+ffmpeg -i bbb200.mkv -c:v libx264 -crf 40 -preset veryslow -pass 1 -passlogfile crf40 -an -f null -
+	crf40-0.log.mbtree
+ffmpeg -i bbb200.mkv -c:v libx264 -b:v 2800k -minrate 900k -maxrate 2610k -preset ultrafast -pass 1 -passlogfile bv28 -an -f null -
+ffmpeg -i bbb200.mkv -c:v libx264 -b:v 1800k -minrate 1200k -maxrate 2610k -preset ultrafast -pass 1 -passlogfile mi12 -an -f null -
+ffmpeg -i bbb200.mkv -c:v libx264 -b:v 1800k -minrate 900k -maxrate 2810k -preset ultrafast -pass 1 -passlogfile mz28 -an -f null -
+ffmpeg -i bbb200.mkv -c:v libx264 -b:v 2800k -minrate 900k -maxrate 2610k -preset ultrafast -pass 2 -passlogfile bv28 -an foo.mp4
+
+ffmpeg -i bbb200.mkv -c:v libx264 -b:v 2800k -minrate 900k -maxrate 2610k -bufsize 5000k -preset ultrafast -pass 1 -passlogfile bv28buf -an -f null -
+max bitrate less than average bitrate, assuming CBR
+ffmpeg -i bbb200.mkv -c:v libx264 -b:v 2000k -minrate 900k -maxrate 2610k -bufsize 5000k -preset ultrafast -pass 1 -passlogfile bv28buf -an -f null -
+これでエラーがなくなる
+ffmpeg -i bbb200.mkv -c:v libx264 -b:v 2000k -minrate 900k -maxrate 2610k -bufsize 4000k -preset ultrafast -pass 1 -passlogfile bv28buf4 -an -f null -
+
+
+目標ビットレート
+https://www.dacast.com/blog/best-h-264-encoder-settings-for-live-streaming/
+426x240		350
+640x360		350 – 800
+854x480		800 – 1200
+1280x720		1200 – 1900
+1920x1080	1900 – 4500
+
+https://www.wowza.com/docs/how-to-optimize-the-video-bitrate
+data rate / (resolution * frames per second) = BPP
+	指数近似	0.032
+	対数近似	0.04
+	累乗近似	0.058
+(resolution * frames per second * BPP) / 1000 = bitrate
+284 * 160 * 25 * 0.150 / 1000 = 170 kbps
+426 * 240 * 25 * 0.133 / 1000 = 340 kbps
+480 * 360 * 25 * 0.125 / 1000 = 540 kbps
+854 * 480 * 25 * 0.100 / 1000 = 1024 kbps
+1280 * 720 * 25 * 0.080 / 1000 = 1843 kbps
+1920 * 1080 * 25 * 0.075 / 1000 = 3888 kbps
+
+
+https://bitmovin.com/docs/encoding/tutorials/h264-presets
+オプション設定
+
+https://streaminglearningcenter.com/wp-content/uploads/2018/05/Encoding-for-HEVC-SME-2018-Jan.pdf
+P51
+416 x 234	145
+640 x 360	365
+768 x 432	730
+768 x 432	1100
+960 x 540	2000
+1280 x 720	3000
+1280 x 720	4500
+1920 x 1080	6000
+1920 x 1080	7800
+
+
+
+
+https://trac.ffmpeg.org/wiki/Encode/H.264
 https://stackoverflow.com/questions/40668616/whats-the-difference-with-crf-and-qp-in-ffmpeg
 	http://slhck.info/articles/crf
 

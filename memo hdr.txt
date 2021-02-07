@@ -2,6 +2,15 @@ https://twitter.com/toru_ver15/status/1342992253619372032
 http://www.brucelindbloom.com/
 https://twitter.com/toru_ver15/status/1337365869668618242
 
+https://twitter.com/AnimeHdr/status/1355478480717111298
+XYZ→色の定量的表示の方法
+色光の三原色が元
+目はRGBの3種類の受容器によって色を知覚
+
+RGBじゃダメなの？
+→ダメじゃないが一部の色はCIEが定義したRGBでは表示できない
+→RGBの範囲外を仮定して補正
+→XYZ
 
 https://trev16.hatenablog.com/entry/2021/01/01/152736
 	Google Chrome での動画再生のカラーマネジメントに関する調査をしたい

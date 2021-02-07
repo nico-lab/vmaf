@@ -1,16 +1,93 @@
 https://nico-lab.net/setting_libvpx-vp9_with_ffmpeg/
+https://developers.google.com/media/vp9/settings/vod
+2passすること
+ビットレートの下限は指定ビットレートの50%、上限は145%としている。
+-crf 37 -b:v 150k -minrate 75k -maxrate 218k
+	解像度に応じて品質と上下ビットレートを指定する
+-tile-columns 0 -threads 2
+	解像度に応じて数値を上げる
+-g 240
+	fpsの10倍
+
+#ファイルの種類
+4k60				split\original
+4k30	プリエンコード	4k\uhd
+2k30				hhb
+
+https://developers.google.com/media/vp9/bitrate-modes
+# crf
+最終的には平均ビットレートよりも高品質にcrfを指定するかしないか
+240 	37
+360 	36
+480 	34 (LQ) or 33 (MQ)
+720 	32
+1080 	31
+1440 	24
+2160 	15
+crf固定でbvが大きくなるほどビットレートの差も大きくなる
+	https://docs.google.com/spreadsheets/d/1phZqLOOHhF8hTc13HlGEg8dYo9QM8oGvFpL51SbrPQ4/edit#gid=1758764710
+	https://docs.google.com/spreadsheets/d/15ddn9hd9nz5HYboAkYW2zCv6665Bt9NmdOFwTyeGdDw/edit#gid=0
+
+# bitrate
+https://developers.google.com/media/vp9/settings/vodhttps://developers.google.com/media/vp9/settings/vod
+crf N bv0にすると以下の推奨ビットレートよりも平均ビットレートがかなり高くなる
+720	-b:v 1024k -minrate 512k -maxrate 1485k
+2k	-b:v 1800k  -minrate 900k -maxrate 2610k
+4k30	-b:v 12000k -minrate 6000k -maxrate 17400k
+4k60	-b:v 18000k  -minrate 9000k -maxrate 26100k
+
+https://bitmovin.com/docs/encoding/tutorials/vp9-presets
+aqMode	VARIANCE
+	variance        1
+rateOvershootPct, rateUndershootPct	は25のまま変更なし
+frameParallel	true
+
+
+ffmpeg -i http://media.xiph.org/mango/tears_of_steel_1080p.webm
+
 #pass2とレートコントロール	仮説
 2パス目にはレートコントロールの設定が効かない？
 	レートコントロールしたログパスを使うとそのコントロールで2パス目に調整する？
 シングルパスだけにレートコントロールの設定が効く？
 
 1pass、2passどちらもminrate単体では変化がない
+	minrate、maxrate同時指定しないと効果が出ない？
 -crf 28 -minrate 2000k -b:v 0 
+
+1pass目のcrf, bv固定でminrate、maxrateそれぞれ個別変更で変化あり
+	minrate、maxrate同時指定しないと効果が出ない？
+-crf 31  -b:v 2400k  -minrate 1200k -maxrate 3480k
+	minrateだけ変更は効果あり
+	maxrateだけ変更は効果なし
+
+2pass目のcrf, bv固定でminrate、maxrateそれぞれ個別変更で変化あり
+	minrate、maxrate同時指定しないと効果が出ない？
+-crf 31  -b:v 2400k  -minrate 1000k -maxrate 3480k
+
+2pass目のcrf固定でqmax変更で変化あり
+crf 20 -qmax 30 -b:v 0 
+	crfが高品質でないとqmaxの変化が見られない
 
 1pass、2passどちらもqmax単体では変化はわずか
 -crf 28 -qmax 30 -b:v 0 
 	1passの40,50に変化無く30だけ変化がある
 	2passでは55以下からかすかに変化がある
+
+#1passログファイル
+ffmpeg -f lavfi -i color=r=20:d=1 -c:v libvpx-vp9 -crf 30 -qmin 3 -qmax 40 -b:v 0 -cpu-used 4 -threads 3 -pass 1 -passlogfile aa -f webm -an -f null -
+	1pass crfではログファイルが変わらない
+	crf無指定のビットレートでも変わらない
+1passログファイルが変わるのはどの設定か
+	解像度、fps
+
+1passログファイルが変わらないのはどの設定か
+	crf, qmin, qmax, bv, cpu-used, tile-columns, deadline, 
+		-deadline realtime	はログファイルを出力しない
+
+#ログファイルにフィルタを当てる
+アプコンしたログファイルは変化があり、bicubicが優秀だった
+デノイズするとどうなるだろうか
+	有効な効果は見られなかった
 
 #vp9 abr matrix
 2pass指定で-b:vだけだと1passのログファイルはcpu-usedにどれを使っても変化がない
@@ -24,6 +101,13 @@ https://nico-lab.net/setting_libvpx-vp9_with_ffmpeg/
 
 #diffで再確認
 -crf 20  -b:v 6000k -qmin 3 -qmax 40
+
+#crf, bv どちらも高品質と通常でほかのオプションに変化があるかどうか
+pass 2 -c:v libvpx-vp9 -crf 20 -b:v 2000k -qmin 10 -qmax 50
+	bv固定にcrf変化、qmin、-qmax変化で容量の変化はわずか
+pass 2 -c:v libvpx-vp9 -crf 30 -b:v 2000k -minrate 1000k -maxrate 3000k
+	bv固定にcrf変化、minrate、maxrate変化で容量の変化あり
+
 
 ffmpeg -report -i "C:\\Downloads\\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an -pass 1 -c:v libvpx-vp9 -crf 40 -b:v 1800k -minrate 900k -maxrate 2610k -cpu-used 4 -tile-columns 2 -threads 3 -passlogfile crf40 -f null -
 ffmpeg -report -i "C:\\Downloads\\Big_Buck_Bunny_1080p_surround_frostclick.com_frostwire.com\\Big_Buck_Bunny_1080p_surround_FrostWire.com.avi" -an -t 60 -pass 1 -c:v libvpx-vp9 -crf 20 -b:v 6000k -qmin 3 -qmax 40 -cpu-used 3 -tile-columns 2 -threads 3 -passlogfile cpuc3 -f null -
@@ -42,7 +126,7 @@ diff aaa bbb
 CheckBitrate -i 1 input
 
 
-
+#1pass logfile
 1passのlogfileをcrfの軽いのにしても2パス目のcrfを優先する
 	1passのlogfileのcrfは大きな値を使うのがよい？
 		crfで速度変化なし。同じファイルを流用する
@@ -58,13 +142,6 @@ crf28
 	?2021?年?1?月?17?日、??12:18:49
 	10:18
 
-@これをもう少し調べる
-1passログファイルが変わるのはどの設定か
-	解像度
-
-1passログファイルが変わらないのはどの設定か
-	crf, qmin, qmax, bv, cpu-used, tile-columns, deadline, 
-		-deadline realtime	はログファイルを出力しない
 
 またそのビットレートでvmafがどれくらいになるか
 	crfとvmafの関係を調べる
@@ -87,7 +164,6 @@ crf単体でどれだけビットレートが上がるか
 #運用
 基本オプションの決定
 必要ビットレートを調べてからcrfと上下のビットレートの値を決める
-	qmin, qmaxだと調整しにくいかもしれない
 レートコントロールの決定
 
 # SD解像度	row-mt
