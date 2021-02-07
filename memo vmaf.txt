@@ -1,3 +1,38 @@
+#　ファイル名はリネーム君で一括書き換えして連番にするのが手軽
+setwd("C:/Users/R/Desktop/video2/crf31aq0") #書き換える
+for (i in 0:1){
+	#cname <- paste('official', sprintf("%03d", i), '.csv', sep = "-")
+	cname <- paste(i, '.csv', sep = "-") # n-.csv
+	x <- read.csv(cname, header=T) 
+	pass1 <- 4
+	pass2 <- i
+	vmaf <- (x$vmaf)
+	alength <- length(x$vmaf)
+	#summary(vmaf)
+	mean <- mean(vmaf)
+	min <- min(vmaf)
+	sd <- sd(vmaf)
+	mid <- median(vmaf)
+	q25 <- quantile(vmaf,0.25, names=0)
+	pname <- paste(pass2,'vp9.png',sep = "-")
+	png(pname, width = 300, height = 300)
+	#@グラフに表題を追加する
+	vmaf <- subset(x$vmaf, x$vmaf > 70)
+	mlength <- length(vmaf)
+	ratio <- sprintf("%1.4f", mlength/alength)
+	hist(vmaf, breaks = seq(70, 100, 1), main = paste("vmaf 70 over : ", ratio)) #70未満はグラフ除外
+	#legend("topleft", legend=c("mean:", "min:", "sd:", "mid", "25%"), pch=16)
+	legend("topleft", title="mean min sd medi 25%", legend=c(sprintf("%1.4f", mean), min, sprintf("%1.4f", sd), mid, q25), pch=16)
+	dev.off()  
+	#minを底上げすること。100が多すぎないこと
+	#95未満をいかに減らすか
+	#pass2のCPU3以降で明らかに下限が下がる
+	kakikomi <-paste(i, mean, min, sd, mid, q25, sep = "\t")
+	fname <- paste(pass1,'vp9.txt',sep = "-")
+	write.table(kakikomi, fname, quote=F, row.names=FALSE, col.names=F, sep="\t", fileEncoding="Shift-JIS", append=T) #appendで追記
+}
+
+
 # vmaf	https://nico-lab.net/libvmaf_with_ffmpeg/
 	phone_model=1	がモバイル向けで既定値はPC、TV向け
 ## モデルの差異を調べる
