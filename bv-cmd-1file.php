@@ -1,7 +1,7 @@
 <?php
 # ファイル名とオプションをforeeachを回してコマンドを作る
 /*
-php bv-cmd.php
+php bv-cmd-1file.php
 
 入力ファイルとパスログ、オプション変更
 適宜ビットレートとその割合
@@ -10,19 +10,11 @@ php bv-cmd.php
 $fpe = fopen("enc_cmd.txt", "ab"); 
 $fpv = fopen("vmaf_cmd.txt", "ab"); 
 
-$in_path = ""; // 同じ場所、もしくは相対パスにする
 $in_path = "E:\\4k検証\\HZGD-146\\split\\4k\\";
-
+$in_path = ""; // 同じ場所、もしくは相対パスにする
 // value1 https://qiita.com/shuntaro_tamura/items/784cfd61f355516dfff0
-$in_file[] = array("fname" => "udh_video0000_15kbps_2pass_sameBitrateMaxrate_qmin3_qmax32_shoot0_test1.mp4", "logname" => "000");
-$in_file[] = array("fname" => "udh_video0001_15kbps_2pass_sameBitrateMaxrate_qmin3_qmax32_shoot0_test1.mp4", "logname" => "001");
-$in_file[] = array("fname" => "udh_video0021_15kbps_2pass_sameBitrateMaxrate_qmin3_qmax32_shoot0_test1.mp4", "logname" => "021");
-$in_file[] = array("fname" => "udh_video0022_15kbps_2pass_sameBitrateMaxrate_qmin3_qmax32_shoot0_test1.mp4", "logname" => "022");
-$in_file[] = array("fname" => "udh_video0023_15kbps_2pass_sameBitrateMaxrate_qmin3_qmax32_shoot0_test1.mp4", "logname" => "023");
-$in_file[] = array("fname" => "udh_video0097_15kbps_2pass_sameBitrateMaxrate_qmin3_qmax32_shoot0_test1.mp4", "logname" => "097");
-$in_file[] = array("fname" => "udh_video0220_15kbps_2pass_sameBitrateMaxrate_qmin3_qmax32_shoot0_test1.mp4", "logname" => "220");
-$in_file[] = array("fname" => "udh_video0221_15kbps_2pass_sameBitrateMaxrate_qmin3_qmax32_shoot0_test1.mp4", "logname" => "221");
-$in_file[] = array("fname" => "udh_video0222_15kbps_2pass_sameBitrateMaxrate_qmin3_qmax32_shoot0_test1.mp4", "logname" => "222");
+$in_file[] = array("fname" => "ori-30min.mp4", "logname" => "4k-passlog");
+
 // ファイル名とパスログを書き込むのを省力化したい
 // https://docs.google.com/spreadsheets/d/1zcTHgCedCDec83QYmCMhMc-AdT3fCi3NhJswBBe5VIE/edit#gid=0
 

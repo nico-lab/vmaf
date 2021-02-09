@@ -2,13 +2,15 @@
 # ファイル名とオプションをforeeachを回してコマンドを作る
 /*
 php opt-cmd.php
-php opt-cmd.php > foo.bat
 
+入力ファイルとパスログ、オプション変更
+適宜ビットレートとその割合
 */
 
 $fpe = fopen("enc_cmd.txt", "ab"); 
 $fpv = fopen("vmaf_cmd.txt", "ab"); 
 
+$in_path = ""; // 同じ場所、もしくは相対パスにする
 $in_path = "E:\\4k検証\\HZGD-146\\split\\4k\\";
 // value1 https://qiita.com/shuntaro_tamura/items/784cfd61f355516dfff0
 $in_file[] = array("fname" => "udh_video0000_15kbps_2pass_sameBitrateMaxrate_qmin3_qmax32_shoot0_test1.mp4", "logname" => "000");
@@ -24,7 +26,7 @@ $in_file[] = array("fname" => "udh_video0222_15kbps_2pass_sameBitrateMaxrate_qmi
 // https://docs.google.com/spreadsheets/d/1zcTHgCedCDec83QYmCMhMc-AdT3fCi3NhJswBBe5VIE/edit#gid=0
 
 $ch_opt_name = " -aq-mode ";
-$ch_opt_name_ = "aq_mode"; // 出力ファイル名
+$ch_opt_name_ = "aq_mode"; // 出力フォルダ名
 // value0
 $ch_opt = array(
     0,
@@ -56,7 +58,7 @@ foreach ($ch_opt as $value0){
     foreach ($in_file as $value1){
         $out_name = " ".$ch_opt_name_."\\".$ch_opt_name_.$value0."_".$value1['logname'];
         $out_name_mp4 = $out_name.".mp4";
-        $vmaf_opt = " -filter_complex \"[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]scale2ref=flags=bicubic,libvmaf=vmaf_4k_v0.6.1.pkl:log_fmt=csv:log_path=".$ch_opt_name_."\\".$ch_opt_name_.$value0."_".$value1['logname'].".csv\" -an -f null -";
+        $vmaf_opt = " -filter_complex \"[0:v]settb=1/AVTB,setpts=PTS-STARTPTS[main];[1:v]settb=1/AVTB,setpts=PTS-STARTPTS[ref];[main][ref]scale2ref=flags=bicubic,libvmaf=vmaf_4k_v0.6.1.pkl:log_fmt=csv:log_path=".$ch_opt_name_."/".$ch_opt_name_.$value0."_".$value1['logname'].".csv\" -an -f null -";
         // モデルの変更有
         $enc_cmd = $ff_path.$def_pre_opt.$in_path.$value1['fname'].$def_opt.$bitrate_opt.$value1['logname'].$ch_opt_name.$value0.$out_name_mp4."\n";
     
@@ -65,6 +67,8 @@ foreach ($ch_opt as $value0){
         //echo $vmaf_opt."\n";
         $vmaf_cmd = $ff_path.$def_pre_opt.$out_name_mp4." -i ".$in_path.$value1['fname'].$vmaf_opt."\n";
         fwrite($fpv, $vmaf_cmd);
+        $bitrate_cmd = "CheckBitrate -l 1 ".$out_name_mp4."\n";
+        fwrite($fpv, $bitrate_cmd);
 
     }
 }

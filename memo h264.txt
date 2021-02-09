@@ -62,6 +62,12 @@ data rate / (resolution * frames per second) = BPP
 1280 * 720 * 25 * 0.080 / 1000 = 1843 kbps
 1920 * 1080 * 25 * 0.075 / 1000 = 3888 kbps
 
+https://confl.arms.dmm.com/pages/viewpage.action?pageId=592873471
+4k考察
+https://confl.arms.dmm.com/pages/viewpage.action?pageId=608904691
+HD, SD
+	vmafの値が93を下回らず、かつ全体的にvmafの値が安定すればOKという気持ち
+
 
 https://bitmovin.com/docs/encoding/tutorials/h264-presets
 オプション設定

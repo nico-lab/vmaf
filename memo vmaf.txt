@@ -1,3 +1,5 @@
+90から95の割合が多いほうが良い？
+画像を別フォルダにすると比較に不便
 #　ファイル名はリネーム君で一括書き換えして連番にするのが手軽
 setwd("C:/Users/R/Desktop/video2/crf31aq0") #書き換える
 for (i in 0:1){
@@ -199,6 +201,35 @@ for (i in 0:0){
 	dev.off() 
 }
 
+#複数vmafログをvmafmと一緒にテキスト出力
+setwd("C:/Users/R/Desktop/video2/crf31aq0") #書き換える
+setwd("C:/Users/R/Dropbox/読み物") #書き換える
+setwd("C:/Users/Owner/Dropbox/読み物") #書き換える
+num <- 3
+fname <- "_foo.tsv"
+x <- read.csv("0.csv", header=T) 
+vmafm <- (x$motion2)
+vmaf0 <- (x$vmaf)
+y <- read.csv("1.csv", header=T) 
+vmaf1 <- (x$vmaf)
+v0 <- cbind(vmafm, vmaf0)
+z <- cbind(v0, vmaf1)
+#head(z)
+for (i in 2:num){
+	if (num > 2) {
+		cname <- paste(i, '.csv', sep = "-")
+		y <- read.csv(cname, header=T) 
+		vmaf2 <- (y$vmaf) # ファイルは読み込んでいるがヘッダ名が変わってない
+		z <- cbind(z, vmaf2)
+		write.table(z, fname, quote=F, row.names=FALSE, col.names=F, sep="\t", fileEncoding="Shift-JIS", append=T) #appendで追記
+	} else {
+	}
+}
+#head(z)
+
+
+
+
 
 
 
@@ -233,3 +264,16 @@ quantile(vmaf,0.15, names=0)
 quantile(vmaf,0.10, names=0)
 quantile(vmaf,0.05, names=0)
 quantile(vmaf,0.02, names=0)
+
+latest
+ffmpeg -f lavfi -i color=s=32x32:d=1 -filter_complex split,libvmaf=vmaf_float_v0.6.1.pkl:log_path=tmp.xml  -an -f null -
+ffmpeg -f lavfi -i color=s=32x32:d=1 -filter_complex split,libvmaf="C\\:/test3/local64/bin-video/vmaf_float_v0.6.1.pkl":log_path=tmp.xml  -an -f null -
+ffmpeg -f lavfi -i color=s=32x32:d=1 -filter_complex split,libvmaf="C\\:/test3/local64/bin-video/vmaf_float_v0.6.1.json":log_path=tmp.xml  -an -f null -
+err
+
+floatなしなら読める
+ffmpeg -f lavfi -i color=s=32x32:d=1 -filter_complex split,libvmaf="vmaf_4k_v0.6.1.json":log_path=tmp.xml  -an -f null -
+ffmpeg -f lavfi -i color=s=32x32:d=1 -filter_complex split,libvmaf="vmaf_v0.6.1neg.json":log_path=tmp.xml  -an -f null -
+ffmpeg -f lavfi -i color=s=32x32:d=1 -filter_complex split,libvmaf="vmaf_v0.6.1.json":log_path=tmp.xml  -an -f null -
+ffmpeg -f lavfi -i color=s=32x32:d=1 -filter_complex split,libvmaf="C\\:/test3/local64/bin-video/vmaf_v0.6.1.json":log_path=tmp.xml  -an -f null -
+ok

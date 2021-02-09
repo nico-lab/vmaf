@@ -29,18 +29,32 @@ crf固定でbvが大きくなるほどビットレートの差も大きくなる
 	https://docs.google.com/spreadsheets/d/15ddn9hd9nz5HYboAkYW2zCv6665Bt9NmdOFwTyeGdDw/edit#gid=0
 
 # bitrate
-https://developers.google.com/media/vp9/settings/vodhttps://developers.google.com/media/vp9/settings/vod
+https://developers.google.com/media/vp9/settings/vod
 crf N bv0にすると以下の推奨ビットレートよりも平均ビットレートがかなり高くなる
 720	-b:v 1024k -minrate 512k -maxrate 1485k
 2k	-b:v 1800k  -minrate 900k -maxrate 2610k
 4k30	-b:v 12000k -minrate 6000k -maxrate 17400k
 4k60	-b:v 18000k  -minrate 9000k -maxrate 26100k
+https://docs.google.com/spreadsheets/d/1BiDja3kx4Au14O2iCG1JM9EMoD5y-eGQ7hcX7lhReqM/edit#gid=2127510093
+	crfでbv, maxを固定にすると品質が悪い
+
+# 現状ビットレート
+144	-b:v 150k -maxrate 150k -minrate 75k
+288	-b:v 500k -maxrate 500k -minrate 250k
+432	-b:v 1000k -maxrate 1000k -minrate 500k
+576	-b:v 1500k -maxrate 1500k -minrate 750k
+720	-b:v 2000k -maxrate 2000k -minrate 1000k
+2k	-b:v 3000k -maxrate 3000k -minrate 1500k
+4k	-b:v 16000k -maxrate 16000k -minrate 8000k
 
 https://bitmovin.com/docs/encoding/tutorials/vp9-presets
 aqMode	VARIANCE
 	variance        1
 rateOvershootPct, rateUndershootPct	は25のまま変更なし
 frameParallel	true
+
+# 4k
+https://confl.arms.dmm.com/pages/viewpage.action?pageId=592873471
 
 
 ffmpeg -i http://media.xiph.org/mango/tears_of_steel_1080p.webm
