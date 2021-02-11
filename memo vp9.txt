@@ -53,6 +53,33 @@ aqMode	VARIANCE
 rateOvershootPct, rateUndershootPct	は25のまま変更なし
 frameParallel	true
 
+#-auto-alt-ref
+https://forum.doom9.org/showthread.php?t=165839&page=60
+With libvpx-vp9 v1.9.0 auto-alt-ref only works in 2pass. was this changed or was this always the case?
+Yes (sadly).
+
+#-ts-parameters
+023でテストする
+http://underpop.online.fr/f/ffmpeg/help/options-60.htm.gz
+https://github.com/webmproject/libvpx/blob/master/vpx/vpx_encoder.h
+	https://github.com/webmproject/libvpx/blob/master/vpx/vpx_encoder.h#L131	以下の設定
+		設定が多すぎる。specify temporal scalability parameters、reportで反映具合が見られる
+-ts-parameters ts_number_layers=3:\
+ts_target_bitrate=250000,500000,1000000:ts_rate_decimator=4,2,1:\
+ts_periodicity=4:ts_layer_id=0,2,1,2
+'ts_number_layers'
+    Number of temporal coding layers. 
+'ts_target_bitrate'
+    Target bitrate for each temporal layer. 
+'ts_rate_decimator'
+    Frame rate decimation factor for each temporal layer. 
+'ts_periodicity'
+    Length of the sequence defining frame temporal layer membership. 
+'ts_layer_id'
+    Template defining the membership of frames to temporal layers.
+ffmpeg -f lavfi -i testsrc2=d=1 -c:v libvpx-vp9 -crf 30 -b:v 0 -cpu-used 4 foo.webm -y
+ffmpeg -report -f lavfi -i testsrc2=d=1 -c:v libvpx-vp9 -crf 30 -b:v 0 -cpu-used 4 -ts-parameters ts_number_layers=3:ts_target_bitrate=250000,500000,1000000:ts_rate_decimator=4,2,1:ts_periodicity=4:ts_layer_id=0,2,1,2 foo.webm -y
+
 # 4k
 https://confl.arms.dmm.com/pages/viewpage.action?pageId=592873471
 

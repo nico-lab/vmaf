@@ -1,38 +1,103 @@
 90から95の割合が多いほうが良い？
 画像を別フォルダにすると比較に不便
 #　ファイル名はリネーム君で一括書き換えして連番にするのが手軽
-setwd("C:/Users/R/Desktop/video2/crf31aq0") #書き換える
-for (i in 0:1){
-	#cname <- paste('official', sprintf("%03d", i), '.csv', sep = "-")
-	cname <- paste(i, '.csv', sep = "-") # n-.csv
+# vmaf、vmafmの統計とヒストグラム、折れ線グラフ、テキストはvmafとvmafmのそのままを横に並べる
+# 60の割り算がvmaf, vmafで横軸おかしい
+setwd("C:/Users/R/Desktop/vmaf") #書き換える
+setwd("C:/Users/R/Desktop/video/tmp4") #書き換える
+setwd("C:/Users/shohata-makoto/Desktop/video/tmp4") #書き換える
+setwd("C:/Users/R/Desktop/vmaf") #書き換える
+for (i in 0:3){
+	fps <- 60 # 整数
+	cname <- paste(i, '.csv', sep = "")
 	x <- read.csv(cname, header=T) 
-	pass1 <- 4
-	pass2 <- i
+	num <- floor(length(x$vmaf)/fps)*fps
+	#vmafm
+	vmafm <- x$motion2
+	m_mean <- mean(vmafm)
+	m_min <- min(vmafm)
+	m_sd <- sd(vmafm)
+	m_medi <- median(vmafm)
+	m_q25 <- quantile(vmafm,0.25, names=0)
+	kakikomi <-paste(i, m_mean, m_min, m_sd, m_medi, m_q25, sep = "\t")
+	fname <- paste('_vmafm.txt',sep = "")
+	write.table(kakikomi, fname, quote=F, row.names=FALSE, col.names=F, sep="\t", fileEncoding="Shift-JIS", append=T) #appendで追記
+	z1 <- vmafm[1:num]
+	z2 <- matrix(vmafm[1:num], nrow=fps)
+	vmafm_gop <- apply(z2, 2, mean)
+	#vmaf
 	vmaf <- (x$vmaf)
 	alength <- length(x$vmaf)
-	#summary(vmaf)
 	mean <- mean(vmaf)
 	min <- min(vmaf)
+	max <- max(vmaf)
 	sd <- sd(vmaf)
-	mid <- median(vmaf)
+	medi <- median(vmaf)
 	q25 <- quantile(vmaf,0.25, names=0)
-	pname <- paste(pass2,'vp9.png',sep = "-")
+	mean_v <- rep(mean,alength)
+	#hist
+	pname <- paste("hist-vmaf-", i,'.png',sep = "")
 	png(pname, width = 300, height = 300)
-	#@グラフに表題を追加する
-	vmaf <- subset(x$vmaf, x$vmaf > 70)
-	mlength <- length(vmaf)
+	vmaf70 <- subset(x$vmaf, x$vmaf > 70)
+	mlength <- length(vmaf70)
 	ratio <- sprintf("%1.4f", mlength/alength)
-	hist(vmaf, breaks = seq(70, 100, 1), main = paste("vmaf 70 over : ", ratio)) #70未満はグラフ除外
-	#legend("topleft", legend=c("mean:", "min:", "sd:", "mid", "25%"), pch=16)
-	legend("topleft", title="mean min sd medi 25%", legend=c(sprintf("%1.4f", mean), min, sprintf("%1.4f", sd), mid, q25), pch=16)
+	hist(vmaf70, breaks = seq(70, 100, 1), main = paste(i, " vmaf 70 over : ", ratio)) #70未満はグラフ除外
 	dev.off()  
-	#minを底上げすること。100が多すぎないこと
-	#95未満をいかに減らすか
-	#pass2のCPU3以降で明らかに下限が下がる
-	kakikomi <-paste(i, mean, min, sd, mid, q25, sep = "\t")
-	fname <- paste(pass1,'vp9.txt',sep = "-")
+	kakikomi <-paste(i, mean, min, sd, medi, q25, sep = "\t")
+	fname <- paste('_vmaf.txt',sep = "-")
 	write.table(kakikomi, fname, quote=F, row.names=FALSE, col.names=F, sep="\t", fileEncoding="Shift-JIS", append=T) #appendで追記
+	#line, 別ファイルと比較するならylimを揃える
+	y2 <- matrix(vmaf[1:num], nrow=fps)
+	vmaf_gop <- apply(y2, 2, mean) # vmaf
+	vmaf_min_gop <- min(vmaf_gop)
+	pname <- paste("line-vmaf-",  i, '.png', sep = "")
+	png(pname, width = 1920, height = 300)
+	par(oma = c(0, 0, 0, 2))
+	title_v = paste("vmaf波形：", i, ", mean : ", sprintf("%1.4f", mean), ", min : ", sprintf("%1.4f", min), ", sd : ", sprintf("%1.4f", sd), ", medi : ", sprintf("%1.4f", medi), ", 25% : ", sprintf("%1.4f", q25))
+	title_vm = paste(", vmafm波形：mean：", sprintf("%1.4f", m_mean), ", sd : ", sprintf("%1.4f", m_sd), ", medi : ", sprintf("%1.4f", m_medi), ", 25% : ", sprintf("%1.4f", m_q25))
+	title = paste(sprintf("%1.4f", mean), min, sprintf("%1.4f", sd), medi, q25)
+	plot(mean_v, ylim=c(vmaf_min_gop, max), type="l", xlab = "", ylab = "", ann=F, col="red")
+	par(new=T)
+	plot(vmaf_gop, ylim=c(vmaf_min_gop, max), type="l", xlab = "", ylab = "vmaf_gop", main = paste(title_v, title_vm))
+	par(new=T)
+	plot(vmafm_gop, type="l", ylim=c(0, 20), xlab = "frames", ylab = "", col="green", axes = FALSE)
+	axis(4)
+	mtext("vmafm_gop", side = 4, line = 3, col="green",)
+	dev.off() 
 }
+
+
+# ビットレート折れ線グラフ
+## 平均ビットレートの横線を追加
+setwd("C:/Users/R/Desktop/bv") #書き換える
+for (i in 0:6){
+	cname <- paste(i, '.csv', sep = "")
+	x <- read.csv(cname, header=T) 
+	pass2 <- i
+	kbps <- (x$kbps)
+	alength <- length(x$kbps)
+	#summary(kbps)
+	mean <- mean(kbps)
+	bmax <- max(kbps)
+	mean_c <- rep(mean,alength)
+	min <- min(kbps)
+	sd <- sd(kbps)
+	medi <- median(kbps)
+	q25 <- quantile(kbps,0.25, names=0)
+	pname <- paste("hist-kbps-", pass2,'.png',sep = "")
+	kakikomi <-paste(i, mean, min, sd, medi, q25, sep = "\t")
+	fname <- paste('_kbps.txt',sep = "-")
+	write.table(kakikomi, fname, quote=F, row.names=FALSE, col.names=F, sep="\t", fileEncoding="Shift-JIS", append=T) #appendで追記
+	pname <- paste("line-kbps-", i, '.png', sep = "")
+	png(pname, width = 1920, height = 300)
+	plot(mean_c, ylim=c(0, bmax), type="l", xlab = "", ylab = "", ann=F, col="red")
+	par(new=T)
+	plot(kbps, ylim=c(0, bmax), type="l", xlab = "frames", main = paste("ビットレート波形：", i, ", mean : ", sprintf("%1.0f", mean), ", min : ", sprintf("%1.0f", min), ", sd : ", sprintf("%1.0f", sd), ", medi : ", sprintf("%1.0f", medi), ", q25 : ", sprintf("%1.0f", q25)))
+	dev.off() 
+}
+
+
+## 以下メモ
 
 
 # vmaf	https://nico-lab.net/libvmaf_with_ffmpeg/
@@ -176,7 +241,7 @@ for (i in 0:0){
 	cname <- paste('03', i, '.csv', sep = "-") #"official-0-.csv"
 	x <- read.csv(cname, header=T)
 	name <- "official"
-	fps <- 24
+	fps <- 24 # 整数
 	#length(x$vmaf)/fps
 	num <- floor(length(x$vmaf)/fps)*fps
 	y <- x$vmaf
@@ -201,7 +266,7 @@ for (i in 0:0){
 	dev.off() 
 }
 
-#複数vmafログをvmafmと一緒にテキスト出力
+#複数vmafログをvmafmと一緒にテキスト出力、未完成
 setwd("C:/Users/R/Desktop/video2/crf31aq0") #書き換える
 setwd("C:/Users/R/Dropbox/読み物") #書き換える
 setwd("C:/Users/Owner/Dropbox/読み物") #書き換える
